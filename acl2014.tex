@@ -305,13 +305,13 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-This work presents a preliminary exploration of the opportunities and challenges of learning semantic parsers from heterogeneous semantic annotation sources.
+A number of semantic annotation efforts have produced a variety of annotated corpora, capturing various aspects of semantic knowledge in different formalisms. Due to to the cost of these annotation efforts and the relatively small amount of semantically annotated corpora, we argue it is advantageous to be able to leverage as much annotated data as possible. This work presents a preliminary exploration of the opportunities and challenges of learning semantic parsers from heterogeneous semantic annotation sources. 
 \end{abstract}
 
 \section{Introduction}
-Multiple annotated resources capture semantic information, for example FrameNet \cite{framenet}, PropBank \cite{propbank}, VerbNet \cite{vnet}. Each of them the result of pain-staking annotation efforts by teams of linguistics over several years. However, they are the result of largely independent annotation efforts which different make theoretical commitments. In this essay, we consider how we might best leverage such heterogenous resources to improve semantic parsing, so as to let semantic resources created at considerable cost not go to waste.
+Multiple annotated resources capture semantic information, for example FrameNet \citep{framenet}, PropBank \citep{propbank}, VerbNet \citep{vnet}. Each of them the result of pain-staking annotation efforts by teams of linguistics over several years. However, they are the result of largely independent annotation efforts which different make theoretical commitments. In this essay, we consider how we might best leverage such heterogenous resources to improve semantic parsing, so as to let semantic resources created at considerable cost not go to waste.
 
-Systems for semantic parsing tasks have mostly focused on using only a single resource. For instance, SEMAFOR \cite{semafor} is a frame-semantic parsing system based on supervised learning that uses FrameNet data to train a model. The Illinois-semantic role labeling system \cite{illinoisSRL} uses PropBank annotations. Often, a single resource despite being very high quality does not contain comprehensive annotations for every semantic entity and will not cover all semantic concepts. For instance, PropBank annotations are very rich in verbs, but very sparse in nouns. These resources also differ in the granularity of the annotated data - FrameNet frames are semantically finer-grained as compared to the PropBank rolesets. However, together these complementary sources provide a very good and diverse coverage of the semantic space - a fact that should be exploited by systems in order to achieve a better performance on semantic analysis. Preliminary work in dependency parsing has demonstrated that divergent treebanks can be leveraged to improve parsing quality \cite{zhou:2013}.
+Systems for semantic parsing tasks have mostly focused on using only a single resource. For instance, SEMAFOR \citep{semafor} is a frame-semantic parsing system based on supervised learning that uses FrameNet data to train a model. The Illinois-semantic role labeling system \citep{illinoisSRL} uses PropBank annotations. Often, a single resource despite being very high quality does not contain comprehensive annotations for every semantic entity and will not cover all semantic concepts. For instance, PropBank annotations are very rich in verbs, but very sparse in nouns. These resources also differ in the granularity of the annotated data - FrameNet frames are semantically finer-grained as compared to the PropBank rolesets. However, together these complementary sources provide a very good and diverse coverage of the semantic space - a fact that should be exploited by systems in order to achieve a better performance on semantic analysis. Preliminary work in dependency parsing has demonstrated that divergent treebanks can be leveraged to improve parsing quality \citep{zhou:2013}.
 
 From a supervised learning perspective, the problem of combining the knowledge across these resources can be viewed as a joint learning problem. If we treat the annotation schema of each resource as one label-space, then we can formulate this as a multitask learning problem across tasks with different label spaces. The goal of a system should then be to learn a model over the different label spaces. This problem also manifests in the information extraction community, where there are multiple knowledge-bases confirming to different ontologies.  
 
@@ -397,7 +397,7 @@ Annotation density & 8.6 \\ \hline \hline
 Sentences in PB WSJ data &  38594 \\ 
 Verb tokens in PB WSJ & 74977 \\ 
 Annotation density &  1.9 \\\hline \hline
-Sentences extracted & 12896 \\ 
+Sentences extracted & 12382\\ 
 from SemLink PB-WSJ & \\ 
 Annotation sets extracted & 15323\\ 
 Annotation density & 1.2 \\ \hline 
