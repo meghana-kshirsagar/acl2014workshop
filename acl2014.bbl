@@ -1,10 +1,28 @@
 \begin{thebibliography}{}
 
+\bibitem[\protect\citename{Argyriou \bgroup et al.\egroup }2006]{mtfl}
+A.~Argyriou, T.~Evgeniou, and M.~Pontil.
+\newblock 2006.
+\newblock Multi-task feature learning.
+\newblock {\em NIPS}.
+
+\bibitem[\protect\citename{Blitzer \bgroup et al.\egroup }2006]{scl}
+John Blitzer, R.~McDonald, and F.~Pereira.
+\newblock 2006.
+\newblock Domain adaption with structural correspondence learning.
+\newblock {\em EMNLP}.
+
 \bibitem[\protect\citename{Bonial \bgroup et al.\egroup }2014]{semlink}
 Claire Bonial, Kevin Stowe, and Martha Palmer.
 \newblock 2014.
 \newblock Renewing and revising semlink.
 \newblock {\em ACL}.
+
+\bibitem[\protect\citename{Clark \bgroup et al.\egroup }2003]{clark03}
+Stephen Clark, James~R. Curran, and Miles Osborne.
+\newblock 2003.
+\newblock Bootstrapping pos taggers using unlabelled data.
+\newblock {\em CoNLL}.
 
 \bibitem[\protect\citename{Das \bgroup et al.\egroup }2010]{semafor}
 D.~Das, N.~Schneider, D.~Chen, and N.~A. Smith.
