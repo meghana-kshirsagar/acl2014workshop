@@ -1,13 +1,281 @@
+\PassOptionsToPackage{usenames}{color}
 \documentclass[11pt]{article}
+\usepackage{comment}
+\usepackage{relsize} % relative font sizes (e.g. \smaller). must precede ACL style
 \usepackage{acl2014}
-\usepackage{times}
-\usepackage{url}
-\usepackage{latexsym}
-\usepackage{graphicx}
-\usepackage{floatrow}
 
-\newfloatcommand{capbtabboxsmall}{table}[][6cm]
-\newfloatcommand{capbtabboxsmaller}{table}[][3cm]
+\usepackage[linkcolor=blue]{hyperref}
+
+\usepackage[round]{natbib}
+\newcommand{\citeposs}[1]{\citeauthor{#1}'s (\citeyear{#1})}
+
+%\usepackage{times}
+%\usepackage{latexsym}
+
+
+\usepackage[boxed]{algorithm2e}
+\renewcommand\AlCapFnt{\small}
+\usepackage[small,bf,skip=5pt]{caption}
+\usepackage{sidecap} % side captions
+\usepackage{rotating}	% sideways
+
+% Italicize subparagraph headings
+\usepackage{titlesec}
+\titleformat*{\subparagraph}{\itshape}
+\titlespacing{\subparagraph}{%
+  1em}{%              left margin
+  0pt}{% space before (vertical)
+  1em}%               space after (horizontal)
+
+% Numbered Examples and lists
+\usepackage{lingmacros}
+
+\usepackage{enumitem} % customizable lists
+\setitemize{noitemsep,topsep=0em,leftmargin=*}
+\setenumerate{noitemsep,leftmargin=0em,itemindent=13pt,topsep=0em}
+
+
+\usepackage{textcomp}
+% \usepackage{arabtex} % must go after xparse, if xparse is used!
+%\usepackage{utf8}
+% \setcode{utf8} % use UTF-8 Arabic
+% \newcommand{\Ar}[1]{\RL{\novocalize #1}} % Arabic text
+
+\usepackage[procnames]{listings}
+
+\usepackage{amssymb}	%amsfonts,eucal,amsbsy,amsthm,amsopn
+\usepackage{amsmath}
+
+\usepackage{mathptmx}	% txfonts
+\usepackage[scaled]{beramono}
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+
+\usepackage{MnSymbol}	% must be after mathptmx
+
+\usepackage{latexsym}
+
+
+
+
+
+% Tables
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{booktabs} % pretty tables
+\usepackage{multicol}
+\usepackage{footnote}
+
+
+\usepackage{url}
+\usepackage[usenames]{color}
+\usepackage{xcolor}
+
+% colored frame box
+\newcommand{\cfbox}[2]{%
+    \colorlet{currentcolor}{.}%
+    {\color{#1}%
+    \fbox{\color{currentcolor}#2}}%
+}
+
+\usepackage[normalem]{ulem} % \uline
+\usepackage{colortbl}
+\usepackage{graphicx}
+\usepackage{subcaption}
+%\usepackage{tikz-dependency}
+\usepackage{tikz}
+%\usepackage{tree-dvips}
+\usetikzlibrary{arrows,positioning,calc} 
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\usepackage{verbatim}
+\usepackage{ulem}
+
+
+% Author comments
+\usepackage{color}
+\newcommand\bmmax{0} % magic to avoid 'too many math alphabets' error
+\usepackage{bm}
+\definecolor{orange}{rgb}{1,0.5,0}
+\definecolor{mdgreen}{rgb}{0,0.6,0}
+\definecolor{mdblue}{rgb}{0,0,0.7}
+\definecolor{dkblue}{rgb}{0,0,0.5}
+\definecolor{dkgray}{rgb}{0.3,0.3,0.3}
+\definecolor{slate}{rgb}{0.25,0.25,0.4}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{ltgray}{rgb}{0.7,0.7,0.7}
+\definecolor{purple}{rgb}{0.7,0,1.0}
+\definecolor{lavender}{rgb}{0.65,0.55,1.0}
+
+% Settings for algorithm listings
+\makeatletter
+\lst@AddToHook{EveryPar}{%
+  \label{lst:\thelstnumber}% make a label for each line number except the first (assumes only one listing in the document)
+}
+\makeatother
+\lstset{
+% basicstyle=\rmshape,
+  numbers=left,
+  numberstyle=\tt\color{gray},
+  firstnumber=2,
+  stepnumber=5,
+  xleftmargin=3em,
+  language=Python,
+  upquote=true,
+  showstringspaces=false,
+  formfeed=\newpage,
+  tabsize=1,
+  stringstyle=\color{mdgreen},
+  commentstyle=\itshape\color{lavender},
+  basicstyle=\small\smaller\ttfamily,
+  morekeywords={lambda,with,as,assert},
+  keywordstyle=\bfseries\color{magenta},
+  procnamekeys={def},
+  procnamestyle=\bfseries\color{orange},
+  aboveskip=0.5cm,
+  belowskip=0.5cm
+}
+\renewcommand{\lstlistingname}{Algorithm}
+
+
+\newcommand{\ensuretext}[1]{#1}
+\newcommand{\cjdmarker}{\ensuretext{\textcolor{green}{\ensuremath{^{\textsc{CJ}}_{\textsc{D}}}}}}
+\newcommand{\nssmarker}{\ensuretext{\textcolor{magenta}{\ensuremath{^{\textsc{NS}}_{\textsc{S}}}}}}
+\newcommand{\abmarker}{\ensuretext{\textcolor{red}{\ensuremath{^{\textsc{A}}_{\textsc{B}}}}}}
+\newcommand{\ytmarker}{\ensuretext{\textcolor{blue}{\ensuremath{^{\textsc{Y}}_{\textsc{T}}}}}}
+\newcommand{\ftamarker}{\ensuretext{\textcolor{orange}{\ensuremath{^{\textsc{FT}}_{\textsc{A}}}}}}
+\newcommand{\lslmarker}{\ensuretext{\textcolor{purple}{\ensuremath{^{\textsc{LS}}_{\textsc{L}}}}}}
+\newcommand{\arkcomment}[3]{\ensuretext{\textcolor{#3}{[#1 #2]}}}
+%\newcommand{\arkcomment}[3]{}
+\newcommand{\cjd}[1]{\arkcomment{\cjdmarker}{#1}{green}}
+\newcommand{\nss}[1]{\arkcomment{\nssmarker}{#1}{magenta}}
+\newcommand{\ab}[1]{\arkcomment{\abmarker}{#1}{red}}
+\newcommand{\yt}[1]{\arkcomment{\ytmarker}{#1}{blue}}
+\newcommand{\fta}[1]{\arkcomment{\ftamarker}{#1}{orange}}
+\newcommand{\lsl}[1]{\arkcomment{\lslmarker}{#1}{purple}}
+\newcommand{\params}{\mathbf{\theta}}
+\newcommand{\wts}{\mathbf{w}}
+\newcommand{\g}{\mathbf{g}}
+\newcommand{\f}{\mathbf{f}}
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\y}{\mathbf{y}}
+\newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu} % \bar is too narrow in math
+\newcommand{\cost}{c}
+
+\usepackage{nameref}
+\usepackage{cleveref}
+
+% use \S for all references to all kinds of sections, and \P to paragraphs
+% (sadly, we cannot use the simpler \crefname{} macro because it would insert a space after the symbol)
+\crefformat{part}{\S#2#1#3}
+\crefformat{chapter}{\S#2#1#3}
+\crefformat{section}{\S#2#1#3}
+\crefformat{subsection}{\S#2#1#3}
+\crefformat{subsubsection}{\S#2#1#3}
+\crefformat{paragraph}{\P#2#1#3}
+\crefformat{subparagraph}{\P#2#1#3}
+\crefmultiformat{part}{\S#2#1#3}{ and~\S#2#1#3}{, \S#2#1#3}{, and~\S#2#1#3}
+\crefmultiformat{chapter}{\S\S#2#1#3}{ and~#2#1#3}{, #2#1#3}{, and~#2#1#3}
+\crefmultiformat{section}{\S#2#1#3}{ and~\S#2#1#3}{, \S#2#1#3}{, and~\S#2#1#3}
+\crefmultiformat{subsection}{\S#2#1#3}{ and~\S#2#1#3}{, \S#2#1#3}{, and~\S#2#1#3}
+\crefmultiformat{subsubsection}{\S\S#2#1#3}{ and~#2#1#3}{, #2#1#3}{, and~#2#1#3}
+\crefmultiformat{paragraph}{\P\P#2#1#3}{ and~#2#1#3}{, #2#1#3}{, and~#2#1#3}
+\crefmultiformat{subparagraph}{\P\P#2#1#3}{ and~#2#1#3}{, #2#1#3}{, and~#2#1#3}
+\crefrangeformat{part}{\mbox{\S\S#3#1#4--#5#2#6}}
+\crefrangeformat{chapter}{\mbox{\S\S#3#1#4--#5#2#6}}
+\crefrangeformat{section}{\mbox{\S\S#3#1#4--#5#2#6}}
+\crefrangeformat{subsection}{\mbox{\S\S#3#1#4--#5#2#6}}
+\crefrangeformat{subsubsection}{\mbox{\S\S#3#1#4--#5#2#6}}
+\crefrangeformat{paragraph}{\mbox{\P\P#3#1#4--#5#2#6}}
+\crefrangeformat{subparagraph}{\mbox{\P\P#3#1#4--#5#2#6}}
+% for \label[appsec]{...}
+\crefname{appsec}{appendix}{appendices}
+\Crefname{appsec}{Appendix}{Appendices}
+\crefname{enums,enumsi}{example}{examples}
+\Crefname{enums,enumsi}{Example}{Examples}
+\crefformat{enums}{(#2#1#3)}
+\crefformat{enumsi}{(#2#1#3)}
+\crefrangeformat{enums}{\mbox{(#3#1#4--#5#2#6)}}
+\crefrangeformat{enumsi}{\mbox{(#3#1#4--#5#2#6)}}
+
+\ifx\creflastconjunction\undefined%
+\newcommand{\creflastconjunction}{, and\nobreakspace} % Oxford comma for lists
+\else%
+\renewcommand{\creflastconjunction}{, and\nobreakspace} % Oxford comma for lists
+\fi%
+
+\newcommand*{\Fullref}[1]{\hyperref[{#1}]{\Cref*{#1}: \nameref*{#1}}}
+\newcommand*{\fullref}[1]{\hyperref[{#1}]{\cref*{#1}: \nameref{#1}}}
+\newcommand{\fnref}[1]{\autoref{#1}} % don't use \cref{} due to bug in (now out-of-date) cleveref package w.r.t. footnotes
+
+
+% Space savers
+% From http://www.eng.cam.ac.uk/help/tpl/textprocessing/squeeze.html
+%\addtolength{\dbltextfloatsep}{-.5cm} % space between last top float or first bottom float and the text.
+%\addtolength{\intextsep}{-.5cm} % space left on top and bottom of an in-text float.
+%\addtolength{\abovedisplayskip}{-.5cm} % space before maths
+%\addtolength{\belowdisplayskip}{-.5cm} % space after maths
+%\addtolength{\topsep}{-.5cm} %space between first item and preceding paragraph
+%\setlength{\belowcaptionskip}{-.25cm}
+
+
+% customize \paragraph spacing
+\makeatletter
+\renewcommand{\paragraph}{%
+  \@startsection{paragraph}{4}%
+  {\z@}{.2ex \@plus 1ex \@minus .2ex}{-1em}%
+  {\normalfont\normalsize\bfseries}%
+}
+\makeatother
+
+
+
+% Special macros
+\newcommand{\tg}[1]{\texttt{#1}}	% supersense tag name
+\newcommand{\lex}[1]{\textsmaller{\textsf{\textcolor{slate}{\textbf{#1}}}}}	% example lexical item 
+\newcommand{\glosst}[2]{\ensuremath{\underset{\textrm{#2}}{\uline{\textrm{#1}}}}} % gloss text (a word or phrase) (second arg is the gloss)
+\newcommand{\sys}[1]{\mbox{\textbf{#1}}}   % name of a system (one of our experimental conditions)
+\newcommand{\dataset}[1]{\mbox{\textsc{#1}}}	% one of the datasets in our experiments
+\newcommand{\datasplit}[1]{\mbox{\textbf{#1}}}	% portion one of the datasets in our experiments
+\newcommand{\ilbl}[1]{\mbox{\textbf{\textsc{#1}}}} % internal label
+\newcommand{\llbl}[1]{\mbox{\textsc{#1}}} % leaf label
+
+\newcommand{\w}[1]{\textit{#1}}	% word
+\newcommand{\tat}[0]{\textasciitilde}
+
+\newcommand{\shortlong}[2]{#1} % short vs. long version of the paper
+\newcommand{\confversion}[1]{#1}
+\newcommand{\srsversion}[1]{}
+%\newcommand{\finalversion}[1]{#1}
+\newcommand{\finalversion}[1]{}
+\newcommand{\costversion}[1]{}
+\newcommand{\shortversion}[1]{#1}
+\newcommand{\considercutting}[1]{#1}
+\newcommand{\longversion}[1]{} % ...if only there were more space...
+\newcommand{\subversion}[1]{#1} % for the submission version only
+%\newcommand{\draftnotice}[1]{{\it\small #1}\\} % for the draft version only
+\newcommand{\draftnotice}[1]{}
+%\newcommand{\subversion}[1]{}
+
+\hyphenation{WordNet}
+\hyphenation{WordNets}
+\hyphenation{VerbNet}
+\hyphenation{FrameNet}
+\hyphenation{SemCor}
+\hyphenation{PennConverter}
+\hyphenation{an-aly-sis}
+\hyphenation{an-aly-ses}
+\hyphenation{news-text}
+\hyphenation{base-line}
+\hyphenation{de-ve-lop-ed}
+\hyphenation{comb-over}
+\hyphenation{per-cept}
+\hyphenation{per-cepts}
+\hyphenation{post-edit-ing}
+
+\newcommand{\vpred}[1]{\textbf{#1}}
 
 %\setlength\titlebox{5cm}
 
@@ -41,39 +309,41 @@ This work presents a preliminary exploration of the opportunities and challenges
 \section{Introduction}
 Multiple annotated resources capture semantic information, for example FrameNet \cite{framenet}, PropBank \cite{propbank}, VerbNet \cite{vnet}. Each of them the result of pain-staking annotation efforts by teams of linguistics over several years. However, they are the result of largely independent annotation efforts which different make theoretical commitments. In this essay, we consider how we might best leverage such heterogenous resources to improve semantic parsing, so as to let semantic resources created at considerable cost not go to waste.
 
-Systems for semantic parsing tasks have mostly focused on using only a single resource. For instance, Semafor \cite{semafor} is a frame-semantic parsing system based on supervised learning that uses FrameNet data to train a model. The Illinois-semantic role labeling system \cite{illinoisSRL} uses PropBank annotations. Often, a single resource despite being very high quality does not contain comprehensive annotations for every semantic entity and will not cover all semantic concepts. For instance, PropBank annotations are very rich in verbs, but very sparse in nouns. These resources also differ in the granularity of the annotated data - FrameNet frames are semantically finer-grained as compared to the PropBank rolesets. However, together these complementary sources provide a very good and diverse coverage of the semantic space - a fact that should be exploited by systems in order to achieve a better performance on semantic analysis. Preliminary work in dependency parsing has demonstrated that divergent treebanks can be leveraged to improve parsing quality \cite{zhou:2013}.
+Systems for semantic parsing tasks have mostly focused on using only a single resource. For instance, SEMAFOR \cite{semafor} is a frame-semantic parsing system based on supervised learning that uses FrameNet data to train a model. The Illinois-semantic role labeling system \cite{illinoisSRL} uses PropBank annotations. Often, a single resource despite being very high quality does not contain comprehensive annotations for every semantic entity and will not cover all semantic concepts. For instance, PropBank annotations are very rich in verbs, but very sparse in nouns. These resources also differ in the granularity of the annotated data - FrameNet frames are semantically finer-grained as compared to the PropBank rolesets. However, together these complementary sources provide a very good and diverse coverage of the semantic space - a fact that should be exploited by systems in order to achieve a better performance on semantic analysis. Preliminary work in dependency parsing has demonstrated that divergent treebanks can be leveraged to improve parsing quality \cite{zhou:2013}.
 
 From a supervised learning perspective, the problem of combining the knowledge across these resources can be viewed as a joint learning problem. If we treat the annotation schema of each resource as one label-space, then we can formulate this as a multitask learning problem across tasks with different label spaces. The goal of a system should then be to learn a model over the different label spaces. This problem also manifests in the information extraction community, where there are multiple knowledge-bases confirming to different ontologies.  
 
 To see an example illustrating the need for models that integrate resources, consider the following sentence:
 \begin{quote}
-\textit{The award \texttt{celebrates} businesses that \texttt{innovate} products which \texttt{appeal} to social good.}
+\vpred{Taxing} wealthy individuals \vpred{appeals} to liberals; Brown \vpred{urges} \vpred{abolishing} regulations.
+%\textit{The award \texttt{celebrates} businesses that \texttt{innovate} products which \texttt{appeal} to social good.}
 \end{quote}
-
-The three predicates in the above sentence have been rendered in a different font. The frame-semantic parsing output from Semafor is shown in Figure \ref{fig:semaforOutput}. While the system completely misses two of the predicates, one of them \texttt{appeal} is not recognized correctly. The reasons for the errors are: the first two predicates do not have an annotation in FN, and the third one is annotated in the context of appeals in a court of law. More importantly, all three predicates have an appropriate annotation in PB.
+The four verbal predicates in this sentence are in bold. 
+\Cref{fig:semaforOutput} shows the frame-semantic parse predicted by SEMAFOR. 
+While the system completely misses two of the predicates, one of them \texttt{appeal} is not recognized correctly. The reasons for the errors are: the first two predicates do not have an annotation in FN, and the third one is annotated in the context of appeals in a court of law. More importantly, all three predicates have an appropriate annotation in PB.
 
 \begin{figure*}
-\caption{Frame semantic parsing output from Semafor for an example sentence.}
-\includegraphics[scale=0.4]{semafor_output.jpg}
+\includegraphics[width=\textwidth]{tax_example_short.jpg}
+\caption{Frame semantic parse from SEMAFOR for a constructed example sentence.}
 \label{fig:semaforOutput}
 \end{figure*}
 
 
-The following list indicates the scenarios where a joint model based on both FrameNet and PropBank data can improve frame-semantic parsing accuracies in a system like Semafor. The examples and numbers presented below were obtained from the latest FrameNet release (1.5) and for PB we consider only the WSJ section of the annotations.
+The following list indicates the scenarios where a joint model based on both FrameNet and PropBank data can improve frame-semantic parsing accuracies in a system like SEMAFOR. The examples and numbers presented below were obtained from the latest FrameNet release (1.5) and for PB we consider only the WSJ section of the annotations.
 \begin{itemize}
 \item Frames with none or very few annotations in FN. The frame \textit{Manipulation} does not have any annotations for the verb \texttt{hold}, whereas PB-WSJ has 117 instances (that had an extractable argument mapping) for this frame-target combination. The frame \textit{Experiencer\_obj} has several predicates without any annotations, for example \texttt{appeal}, \texttt{harass}, \texttt{worry}, \texttt{boggle}. The first three of these have annotations in the PB-WSJ data. There are 984 such predicates in FN that have been assigned to frames, but with no sentence annotations available.
 \item Frames with few known targets or targets with no associated frames. For example, the frame \textit{Giving} has 19 known verbs as targets in FN. Synonyms of \textit{giving} such as \texttt{allot}, \texttt{assign}, \texttt{designate}, \texttt{allocate} are not present in FN. Overall, there are 475 verbs in the PB WSJ data that are not targets for any frame in FrameNet. Some examples are: \texttt{involve}, \texttt{lurk}, \texttt{nominate}, \texttt{ladle}, \texttt{entice}, \texttt{bank}.
 \end{itemize}
 Ideally, a joint learning system should also be able to suggest new targets for a frame based on the lexical similarity with the frame's existing targets.
 
-Linguistic resources to map the different annotations have been built, but to a very limited extent. SemLink \cite{semlink} is one such database that maps and unifies different lexical resources of semantic information: such as PropBank (PB), FrameNet (FN), VerbNet (VN). The mappings that SemLink provides are available at two different levels: (a) sentence level parallel annotations - the WSJ section of the PB data has been annotated with the appropriate frames and frame-elements as well as VerbNet classes wherever possible, thereby giving detailed PB, VN and FN annotations for each sentence (b) concept/roleset level mappings - these are coarse-level mappings defined between a PB roleset and a VN roleset or a FN frame and a VN roleset. These mappings can be one-to-one, one-to-many or many-to-many depending on the semantic generality of the involved rolesets. To go from a PB roleset to a FN frame, one has to go via the VN roleset first.
+Linguistic resources to map the different annotations have been built, but to a very limited extent. SemLink \cite{semlink} is one such database that maps and unifies different lexical resources of semantic information: such as PropBank (PB), FrameNet (FN), VerbNet (VN). The mappings that SemLink provides are available at two different levels: (a) sentence level parallel annotations - the WSJ section of the PB data has been annotated with the appropriate frames and frame-elements as well as VerbNet classes wherever possible, thereby giving detailed PB, VN and FN annotations for each sentence (b) concept/roleset level mappings---these are coarse-level mappings defined between a PB roleset and a VN roleset or a FN frame and a VN roleset. These mappings can be one-to-one, one-to-many or many-to-many depending on the semantic generality of the involved rolesets. To go from a PB roleset to a FN frame, one has to go via the VN roleset first.
 
-In this work, we will focus on Semafor as the target system whose performance we want to improve. We are hence interested in using the SemLink mappings to get FN compatible data. The type (a) mappings can be directly used to augment the FN annotations; in the next section we present an analysis on the quantity and usability of the available mappings. Using the type (b) annotations first requires disambiguating the frame-to-roleset labels and then aligning the predicate arguments of the roleset with those expected in the frame. Note that the two argument sets might be of different cardinality.
+In this work, we will focus on SEMAFOR as the target system whose performance we want to improve. We are hence interested in using the SemLink mappings to get FN compatible data. The type (a) mappings can be directly used to augment the FN annotations; in the next section we present an analysis on the quantity and usability of the available mappings. Using the type (b) annotations first requires disambiguating the frame-to-roleset labels and then aligning the predicate arguments of the roleset with those expected in the frame. Note that the two argument sets might be of different cardinality.
 
 \section{Data analysis}
 We present some statistics of the data resources in Tables \ref{tab:wsjstats} and \ref{tab:annoUnit}. The first table summarizes the SemLink mappings for the PB WSJ data. The total number of annotated PB instances are 74977, a majority of which do not have the corresponding FN labels due to various difficulties in mapping them. Around 31\% of the predicates have the frame label \textit{IN} meaning ``indefinite''. For these cases the mapping from VN to FN does not clearly indicate which Frame the instance should be. About 20\% of the instances are labeled \textit{NF} or ``no frame'' as FrameNet currently does not have an appropriate frame class for the semantic concept represented by the PB predicate. Of the remaining, 21\% are incomplete as they only have frame labels and no argument annotations. Most of these are predicates with modifier arguments. This leaves about 29\% usable mappings, 9\% of which had argument pointer and other issues. Eventually, we were able to extract about 15323 instances.
 
-The second table compares the extracted PB-WSJ annotations with the original FN annotations (version 1.4) used to train the Semafor model. The number of annotations at the sentence-level and frame-level are shown. It is evident that FN has a much higher annotation density - around 9 frames per sentence, as compared to around 1.2 for the PB derived data .
+The second table compares the extracted PB-WSJ annotations with the original FN annotations (version 1.4) used to train the SEMAFOR model. The number of annotations at the sentence-level and frame-level are shown. It is evident that FN has a much higher annotation density - around 9 frames per sentence, as compared to around 1.2 for the PB derived data .
 
 
 \begin{table}
@@ -143,7 +413,7 @@ As indicated in the introduction, a model encompassing multiple resources can fi
 \section*{Acknowledgments}
 
 % include your own bib file like this:
-\bibliographystyle{acl}
+\bibliographystyle{aclnat}
 \bibliography{refs}
 
 \end{document}
