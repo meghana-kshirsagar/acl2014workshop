@@ -263,7 +263,9 @@
 \hyphenation{WordNets}
 \hyphenation{VerbNet}
 \hyphenation{FrameNet}
+\hyphenation{PropBank}
 \hyphenation{SemCor}
+\hyphenation{SEMAFOR}
 \hyphenation{PennConverter}
 \hyphenation{an-aly-sis}
 \hyphenation{an-aly-ses}
@@ -320,7 +322,25 @@ To see an example illustrating the need for models that integrate resources, con
 \end{quote}
 The four verbal predicates in this sentence are in bold. 
 \Cref{fig:semaforOutput} shows the frame-semantic parse predicted by SEMAFOR. 
-While the system completely misses two of the predicates, one of them \texttt{appeal} is not recognized correctly. The reasons for the errors are: the first two predicates do not have an annotation in FN, and the third one is annotated in the context of appeals in a court of law. More importantly, all three predicates have an appropriate annotation in PB.
+We observe:
+\begin{enumerate}
+  \item \vpred{urges} is mapped correctly to a frame, and its arguments to frame elements. 
+  \item \vpred{appeals} is correctly identified as a target, but the wrong frame label is chosen 
+  (a sense disambiguation error). The parse suggests that somebody is making an appeal to liberals, 
+  whereas the correct analysis would use the Experiencer\_obj frame to represent that an idea
+  (taxing wealthy individuals) provokes an emotional response on the part of liberals. 
+  \nss{mention that SEMAFOR can be run as a hard pipeline or can use beam search b/w frame and arg ID?}
+  \item \vpred{abolishing} is not identified as a target because it is absent from the FrameNet lexicon. 
+  In principle, however, it should be recognized as evoking the Prohibiting frame, which contains 
+  nearly synonymous verbs. SEMAFOR\nss{the online version?} attempts to disambiguate such OOV lexical items 
+  to existing frames \cite{das-acl2011}.
+  \item \vpred{taxing} is not identified as a target because it, too, is absent from the FrameNet lexicon. 
+  However, there is no apparent home for it in any existing frame; a Taxation frame would have to be defined 
+  in the lexicon (and linked to related concepts that already have frames, such as Government\_institution, 
+  Imposing\_obligation, and Commerce\_collect).
+\end{enumerate}
+
+All of these verbs are annotated in the PropBank corpus.\nss{elaborate}
 
 \begin{figure*}
 \includegraphics[width=\textwidth]{tax_example_short.jpg}
