@@ -324,7 +324,11 @@ The four verbal predicates in this sentence are in bold.
 \Cref{fig:semaforOutput} shows the frame-semantic parse predicted by SEMAFOR. 
 We observe:
 \begin{enumerate}
-  \item \vpred{urges} is mapped correctly to a frame, and its arguments to frame elements. 
+  \item \vpred{urges} is mapped correctly to a frame, and its arguments to frame elements.
+  \item \vpred{individuals} receives the correct frame label, People, but is missing an argument 
+  (``wealthy'' should fill the Descriptor frame element). In other wordings of this sentence, 
+  ``wealthy'' was correctly identified as an argument to People, but incorrectly labeled 
+  with the Ethnicity frame element. 
   \item \vpred{appeals} is correctly identified as a target, but the wrong frame label is chosen 
   (a sense disambiguation error). The parse suggests that somebody is making an appeal to liberals, 
   whereas the correct analysis would use the Experiencer\_obj frame to represent that an idea
@@ -333,14 +337,21 @@ We observe:
   \item \vpred{abolishing} is not identified as a target because it is absent from the FrameNet lexicon. 
   In principle, however, it should be recognized as evoking the Prohibiting frame, which contains 
   nearly synonymous verbs. SEMAFOR\nss{the online version?} attempts to disambiguate such OOV lexical items 
-  to existing frames \cite{das-acl2011}.
+  to existing frames \citep{das-acl2011}.
   \item \vpred{taxing} is not identified as a target because it, too, is absent from the FrameNet lexicon. 
   However, there is no apparent home for it in any existing frame; a Taxation frame would have to be defined 
   in the lexicon (and linked to related concepts that already have frames, such as Government\_institution, 
   Imposing\_obligation, and Commerce\_collect).
 \end{enumerate}
 
-All of these verbs are annotated in the PropBank corpus.\nss{elaborate}
+All of these verbs are annotated in the PropBank corpus, which assigns a coarse sense number 
+to each predicate and describes the predicate's core and non-core arguments. 
+Even though PB and FN use different label spaces for predicates/frames and 
+arguments/frame elements, we propose that PB could provide useful information for frame-semantic parsing 
+with respect to (a)~detecting and labeling arguments (\#2 above),  
+(b)~disambiguating targets that have multiple senses in both the PB and FN lexicons (\#3 above), and
+(c)~labeling arguments where SEMAFOR is able to identify the correct frame for a target that is not in FN, 
+provided that some other verbs in the same frame \emph{are} present in both PB and FN (\#4 above).
 
 \begin{figure*}
 \includegraphics[width=\textwidth]{tax_example_short.jpg}
@@ -356,7 +367,7 @@ The following list indicates the scenarios where a joint model based on both Fra
 \end{itemize}
 Ideally, a joint learning system should also be able to suggest new targets for a frame based on the lexical similarity with the frame's existing targets.
 
-Linguistic resources to map the different annotations have been built, but to a very limited extent. SemLink \cite{semlink} is one such database that maps and unifies different lexical resources of semantic information: such as PropBank (PB), FrameNet (FN), VerbNet (VN). The mappings that SemLink provides are available at two different levels: (a) sentence level parallel annotations - the WSJ section of the PB data has been annotated with the appropriate frames and frame-elements as well as VerbNet classes wherever possible, thereby giving detailed PB, VN and FN annotations for each sentence (b) concept/roleset level mappings---these are coarse-level mappings defined between a PB roleset and a VN roleset or a FN frame and a VN roleset. These mappings can be one-to-one, one-to-many or many-to-many depending on the semantic generality of the involved rolesets. To go from a PB roleset to a FN frame, one has to go via the VN roleset first.
+Linguistic resources to map the different annotations have been built, but to a very limited extent. SemLink \citep{semlink} is one such database that maps and unifies different lexical resources of semantic information: such as PropBank (PB), FrameNet (FN), VerbNet (VN). The mappings that SemLink provides are available at two different levels: (a) sentence level parallel annotations - the WSJ section of the PB data has been annotated with the appropriate frames and frame-elements as well as VerbNet classes wherever possible, thereby giving detailed PB, VN and FN annotations for each sentence (b) concept/roleset level mappings---these are coarse-level mappings defined between a PB roleset and a VN roleset or a FN frame and a VN roleset. These mappings can be one-to-one, one-to-many or many-to-many depending on the semantic generality of the involved rolesets. To go from a PB roleset to a FN frame, one has to go via the VN roleset first.
 
 In this work, we will focus on SEMAFOR as the target system whose performance we want to improve. We are hence interested in using the SemLink mappings to get FN compatible data. The type (a) mappings can be directly used to augment the FN annotations; in the next section we present an analysis on the quantity and usability of the available mappings. Using the type (b) annotations first requires disambiguating the frame-to-roleset labels and then aligning the predicate arguments of the roleset with those expected in the frame. Note that the two argument sets might be of different cardinality.
 
@@ -423,8 +434,8 @@ This problem of learning from multiple resources can be formulated in different 
 \begin{itemize}
 \item Learning a deterministic mapping $\phi : \mathcal{Y}' \rightarrow \mathcal{Y}$ between the label spaces from the two resources. Such a mapping can be used to transform the annotations from one resource into the labeling schema used by the other. We could then train a model using $\{X_1, Y_1\} \cup \{X_2, \phi(Y_2)\}$. The SemLink mappings we discussed earlier give us such a function $\phi$ that gives a limited and ambiguous mapping.
 \item A two-stage pipeline that trains a model on $D_1$ say $\theta_1$ and apply it on $X_2$. The output labels can be used as features along with $X_2$ to train the model $\theta_2$ on $D_2$. 
-\item A bootstrapping approach that uses co-training similar to \cite{clark03}, where we iteratively improve one model using the output from the other. This is the same as the pipeline approach described above, performed for several iterations. At iteration $t$, we obtain $\theta_1^t$ and apply it on $X_2$. The output labels are used as features along with $X_2$ to train the model $\theta_2^t$. In the next iteration $(t+1)$, the output labels of $\theta_2^t$ applied on $X_1$ can be used as features to train $\theta_1^{t+1}$.
-\item A multi-task learning based objective function that maximizes the log likelihood over the two data sources $D_1$ and $D_2$. The parameters from the two tasks can be coupled together using a feature transformation \cite{mtfl}, or based on feature correspondences learned using unlabeled data \cite{scl}.
+\item A bootstrapping approach that uses co-training similar to \citep{clark03}, where we iteratively improve one model using the output from the other. This is the same as the pipeline approach described above, performed for several iterations. At iteration $t$, we obtain $\theta_1^t$ and apply it on $X_2$. The output labels are used as features along with $X_2$ to train the model $\theta_2^t$. In the next iteration $(t+1)$, the output labels of $\theta_2^t$ applied on $X_1$ can be used as features to train $\theta_1^{t+1}$.
+\item A multi-task learning based objective function that maximizes the log likelihood over the two data sources $D_1$ and $D_2$. The parameters from the two tasks can be coupled together using a feature transformation \citep{mtfl}, or based on feature correspondences learned using unlabeled data \citep{scl}.
 \end{itemize}
 
 \section{Evaluation}
