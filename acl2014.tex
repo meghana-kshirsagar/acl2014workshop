@@ -340,7 +340,7 @@ As such, the two resources can be seen as partially overlapping but partially co
 We hypothesize that systems could exploit this complementarity to gain robustness at semantic analysis. 
 Encouragingly, some studies of \emph{syntactic} dependency parsing have demonstrated that divergent treebanks can be leveraged 
 to improve parsing quality \citep{zhou:2013,johansson-13}.
-A motivating example appears in \cref{sec:example}, followed by quantative analysis of the resources in \cref{sec:coverage,sec:semlink}.
+A motivating example appears in \cref{sec:example}, followed by quantative analysis of the resources in \cref{sec:quant}.
 
 The problem of combining the knowledge across these resources can be viewed as a 
 transfer learning or joint learning problem. 
@@ -349,6 +349,13 @@ transfer learning or joint learning problem.
 %The goal of a system should then be to learn a model over the different label spaces. 
 This problem also manifests itself in the information extraction community, where there are multiple knowledge bases conforming to different ontologies \citep[e.g.,][]{riedel-13}.  
 We consider several possible modeling frameworks below in \cref{sec:modeling}. 
+
+\begin{figure*}\centering
+\includegraphics[width=.8\textwidth]{tax_example_short.jpg}
+\caption{Frame semantic parse from SEMAFOR for a constructed example sentence.}
+\label{fig:semaforOutput}
+\end{figure*}
+
 
 \section{Example}\label{sec:example}
 
@@ -395,11 +402,6 @@ with respect to (a)~detecting and labeling arguments (\#2 above),
 (c)~labeling arguments where SEMAFOR is able to identify the correct frame for a target that is not in FN, 
 provided that some other verbs in the same frame \emph{are} present in both PB and FN (\#4 above).
 
-\begin{figure*}\centering
-\includegraphics[width=.8\textwidth]{tax_example_short.jpg}
-\caption{Frame semantic parse from SEMAFOR for a constructed example sentence.}
-\label{fig:semaforOutput}
-\end{figure*}
 
 \section{Quantitative analysis}\label{sec:quant}
 
@@ -528,7 +530,7 @@ The sentence ``Speaker Jim Wright\ldots attempting to \vpred{direct} the preside
 which refers to film direction. There are 17 instances with this frame erroneously marked. These kind of errors are hard to detect. 
 The SemLink mappings can thus not be used as gold-standard annotations to train models. One possibility is to use this data as low-confidence training data.}
 
-\section{Models for joint learning}\label{sec:modeling}
+\section{Modeling}\label{sec:modeling}
 This problem of learning from multiple resources can be formulated in different ways. We present here a spectrum of possible approaches, each relying either on a different methodology or manipulating the available data differently. For simplicity, let us assume there are two resources, $D_1$ and $D_2$. Let $X_1, X_2 \in \mathcal{X}$ represent the set of data instances (i.e.~sentences) from the two sources and $Y_1 \in \mathcal{Y}$, $Y_2 \in \mathcal{Y}'$ be the labels.
 \begin{itemize}
 \item \textbf{Deterministically unifying the schemas for the training data.} With a mapping $\phi : \mathcal{Y}' \rightarrow \mathcal{Y}$ between the label spaces from the two resources, the annotations from one resource can be transformed into the labeling schema used by the other, in order to train a single model 
