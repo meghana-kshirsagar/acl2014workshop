@@ -55,7 +55,7 @@
 
 \usepackage{latexsym}
 
-
+\usepackage{microtype}
 
 
 
@@ -507,7 +507,7 @@ Figure \ref{fig:framesBarchart} shows a stacked bar chart plotting the annotatio
 sorted in decreasing order of additional frames obtained. The highest is around 1,500 new annotations for the \fname{Statement} frame.
 \begin{figure*}\centering
 \includegraphics[scale=0.5]{framesBarchart.pdf}
-\caption{The number of new annotations per frame obtained upon extracting the WSJ mapping from SemLink. The bars are coloured (red) to indicate the contribution from the new annotations. Only frames for which new annotations were found are shown.}
+\caption{The number of new annotations per frame obtained upon extracting the WSJ mapping from SemLink. Red bars indicate the contribution from the new annotations. Only frames for which new annotations were found are shown.}
 \label{fig:framesBarchart}
 \end{figure*}
 
@@ -562,7 +562,7 @@ that compensates for gaps in both lexical and corpus coverage to improve perform
 \nss{TODO}}
 
 \bibliographystyle{aclnat}
-%\setlength{\bibsep}{10pt}
+\setlength{\bibsep}{0pt}
 {\fontsize{10}{12.25}\selectfont
 \bibliography{refs}}
 
