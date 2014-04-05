@@ -265,6 +265,7 @@
 \hyphenation{FrameNet}
 \hyphenation{PropBank}
 \hyphenation{SemCor}
+\hyphenation{SemLink}
 \hyphenation{SEMAFOR}
 \hyphenation{PennConverter}
 \hyphenation{an-aly-sis}
@@ -280,6 +281,7 @@
 \newcommand{\vpred}[1]{\textit{#1}} % verb predicate
 \newcommand{\fname}[1]{\textsc{#1}} % frame name
 \newcommand{\rname}[1]{\textbf{#1}} % role/frame element label
+\newcommand{\luname}[1]{\textit{#1}} % lexical unit name (predicate+POS)
 
 %\setlength\titlebox{5cm}
 
@@ -289,7 +291,7 @@
 % in the camera-ready version and ask you to change it back.
 
 
-\title{Heterogeneous Supervisory Data Sources for Semantic Parsing}
+\title{Leveraging Heterogeneous Data Sources for Relational Semantic Parsing}
 
 \author{First Author \\
   Affiliation / Address line 1 \\
@@ -336,12 +338,21 @@ Moreover, the annotated corpora of FrameNet and PropBank capture different domai
 % are semantically finer-grained as compared to the PropBank rolesets. 
 As such, the two resources can be seen as partially overlapping but partially complementary.
 We hypothesize that systems could exploit this complementarity to gain robustness at semantic analysis. 
-Encouragingly, some studies of dependency parsing has demonstrated that divergent treebanks can be leveraged 
+Encouragingly, some studies of \emph{syntactic} dependency parsing have demonstrated that divergent treebanks can be leveraged 
 to improve parsing quality \citep{zhou:2013,johansson-13}.
+A motivating example appears in \cref{sec:example}, followed by quantative analysis of the resources in \cref{sec:coverage,sec:semlink}.
 
-From a supervised learning perspective, the problem of combining the knowledge across these resources can be viewed as a joint learning problem. If we treat the annotation schema of each resource as one label-space, then we can formulate this as a multitask learning problem across tasks with different label spaces. The goal of a system should then be to learn a model over the different label spaces. This problem also manifests in the information extraction community, where there are multiple knowledge-bases confirming to different ontologies.  
+The problem of combining the knowledge across these resources can be viewed as a 
+transfer learning or joint learning problem. 
+%If we treat the annotation schema of each resource as one label space, then we can formulate this 
+%as a multitask learning problem across tasks with different label spaces. 
+%The goal of a system should then be to learn a model over the different label spaces. 
+This problem also manifests itself in the information extraction community, where there are multiple knowledge bases conforming to different ontologies \citep[e.g.,][]{riedel-13}.  
+We consider several possible modeling frameworks below in \cref{sec:modeling}. 
 
-To see an example illustrating the need for models that integrate resources, consider the following sentence:
+\section{Example}\label{sec:example}
+
+An example illustrating the need for models that integrate resources is as follows:
 \begin{quote}
 \vpred{Taxing} wealthy individuals \vpred{appeals} to liberals; Brown \vpred{urges} \vpred{abolishing} regulations.
 %\textit{The award \texttt{celebrates} businesses that \texttt{innovate} products which \texttt{appeal} to social good.}
@@ -380,12 +391,13 @@ with respect to (a)~detecting and labeling arguments (\#2 above),
 (c)~labeling arguments where SEMAFOR is able to identify the correct frame for a target that is not in FN, 
 provided that some other verbs in the same frame \emph{are} present in both PB and FN (\#4 above).
 
-\begin{figure*}
-\includegraphics[width=\textwidth]{tax_example_short.jpg}
+\begin{figure*}\centering
+\includegraphics[width=.8\textwidth]{tax_example_short.jpg}
 \caption{Frame semantic parse from SEMAFOR for a constructed example sentence.}
 \label{fig:semaforOutput}
 \end{figure*}
 
+\section{Lexical coverage}\label{sec:coverage}
 
 The following list indicates the scenarios where a joint model based on both FrameNet and PropBank data can improve frame-semantic parsing accuracies in a system like SEMAFOR. The examples and numbers presented below were obtained from the latest FrameNet release (1.5) and for PB we consider only the WSJ section of the annotations.
 \begin{itemize}
@@ -395,86 +407,96 @@ For example, the frame \fname{Giving} has 19 known verbs as targets in FN.
 Many (near-)synonyms of \vpred{give} such as \vpred{allot}, \vpred{assign}, \vpred{designate}, and \vpred{allocate}, are not present in FN. 
 Overall, there are 475 verbs in the PB WSJ data that are not targets for any frame in FrameNet. Some examples are: \vpred{involve}, \vpred{lurk}, \vpred{nominate}, \vpred{ladle}, \vpred{entice}, and \vpred{bank}.
 \end{itemize}
-Ideally, a joint learning system should also be able to suggest new targets for a frame based on the lexical similarity with the frame's existing targets.
+%Ideally, a joint learning system should also be able to suggest new targets for a frame based on the lexical similarity with the frame's existing targets.
 
-Linguistic resources to map the different annotations have been built, but to a very limited extent. SemLink \citep{semlink} is one such database that maps and unifies different lexical resources of semantic information: such as PropBank (PB), FrameNet (FN), VerbNet (VN). The mappings that SemLink provides are available at two different levels: (a) sentence level parallel annotations - the WSJ section of the PB data has been annotated with the appropriate frames and frame-elements as well as VerbNet classes wherever possible, thereby giving detailed PB, VN and FN annotations for each sentence (b) concept/roleset level mappings---these are coarse-level mappings defined between a PB roleset and a VN roleset or a FN frame and a VN roleset. These mappings can be one-to-one, one-to-many or many-to-many depending on the semantic generality of the involved rolesets. To go from a PB roleset to a FN frame, one has to go via the VN roleset first.
+\section{SemLink mappings}\label{sec:semlink}
+
+Linguistic resources to map the different annotations have been built, but to a very limited extent. SemLink \citep{semlink} is one such database that maps and unifies different lexical resources of semantic information: such as PropBank (PB), FrameNet (FN), VerbNet (VN). The mappings that SemLink provides are available at two different levels: (a) sentence level parallel annotations---the WSJ section of the PB data has been annotated with the appropriate frames and frame-elements as well as VerbNet classes wherever possible, thereby giving detailed PB, VN and FN annotations for each sentence (b) concept/roleset level mappings---these are coarse-level mappings defined between a PB roleset and a VN roleset or a FN frame and a VN roleset. These mappings can be one-to-one, one-to-many or many-to-many depending on the semantic generality of the involved rolesets. To go from a PB roleset to a FN frame, one has to go via the VN roleset first.
 
 In this work, we will focus on SEMAFOR as the target system whose performance we want to improve. We are hence interested in using the SemLink mappings to get FN compatible data. The type (a) mappings can be directly used to augment the FN annotations; in the next section we present an analysis on the quantity and usability of the available mappings. Using the type (b) annotations first requires disambiguating the frame-to-roleset labels and then aligning the predicate arguments of the roleset with those expected in the frame. Note that the two argument sets might be of different cardinality.
 
-\section{Data analysis}
+
 We present some statistics of the data resources in Tables \ref{tab:wsjstats} and \ref{tab:annoUnit}. The first table summarizes the SemLink mappings for the PB WSJ data. The total number of annotated PB instances are 74977, a majority of which do not have the corresponding FN labels due to various difficulties in mapping them. Around 31\% of the predicates have the frame label \texttt{IN} meaning ``indefinite''. For these cases the mapping from VN to FN does not clearly indicate which Frame the instance should be. About 20\% of the instances are labeled \texttt{NF} or ``no frame'' as FrameNet currently does not have an appropriate frame class for the semantic concept represented by the PB predicate. Of the remaining, 21\% are incomplete as they only have frame labels and no argument annotations. Most of these are predicates with modifier arguments. This leaves about 29\% usable mappings, 9\% of which had argument pointer and other issues. Eventually, we were able to extract about 15323 instances.
 
-The second table compares the extracted PB-WSJ annotations with the original FN annotations (version 1.4) used to train the SEMAFOR model. The number of annotations at the sentence-level and frame-level are shown. It is evident that FN has a much higher annotation density - around 9 frames per sentence, as compared to around 1.2 for the PB derived data .
+The second table compares the extracted PB-WSJ annotations with the original FN annotations (version 1.4) used to train the SEMAFOR model. The number of annotations at the sentence-level and frame-level are shown. It is evident that FN has a much higher annotation density---around 9 frames per sentence, as compared to around 1.2 for the PB derived data .
 
 
-\begin{table}
+\begin{table}\centering\small
+\begin{tabular}{@{}>{\raggedright}p{13em}@{~~}r@{~~}r@{}}
+\bf FN frame annotation & \bf PB verb tokens & \bf \% of all \\ \hline
+Frame label = \texttt{NF} & 14,624 & 20\%\\ 
+Frame label = \texttt{IN} & 22,982 & 31\% \\ 
+Frame with no arguments & 15,533 & 21\% \\ 
+Frame with at least 1~mappable argument  & 15,323 & 20\% \\ 
+Instances not mapped due to other issues & 6,516 & 9\% \\ \hline 
+Total  & 74,977 & 100\% \\
+\end{tabular}
 \caption{Statistics of PB-WSJ data from SemLink}
 \label{tab:wsjstats}
-\begin{tabular}{|l|c|c|} \hline
-FN frame annotation & Verb tokens & \% of all \\
-& from PB & \\ \hline \hline
-Frame label = \texttt{NF} & 14624 & 20\%\\ \hline
-Frame label = \texttt{IN} & 22982 & 31\% \\ \hline
-Frame with no & 15533 & 21\% \\ 
-arguments  & & \\\hline
-Frame with at least & 15323 & 20\% \\ 
-1 argument mappable & & \\ \hline
-Instances not mapped & 6516 & 9\% \\ 
-due to other issues & & \\ \hline \hline
-Total PB predicate & 74977 & 100\% \\
-tokens (instances) & & \\ \hline
-\end{tabular}
 \end{table}
 
-\begin{table}
-\caption{Comparison of annotation density}
-\begin{tabular}{|l|c|} \hline
-\label{tab:annoUnit}
-Annotation unit & Count \\\hline \hline
-Sentences in FN 1.4 & 2780 \\ 
-Annotation sets in FN 1.4 & 23940 \\ % new framenet: 27409
-(i.e frame instances) & \\ 
-Annotation density & 8.6 \\ \hline \hline
-Sentences in PB WSJ data &  38594 \\ 
-Verb tokens in PB WSJ & 74977 \\ 
-Annotation density &  1.9 \\\hline \hline
-Sentences extracted & 12382\\ 
-from SemLink PB-WSJ & \\ 
-Annotation sets extracted & 15323\\ 
-Annotation density & 1.2 \\ \hline 
+\begin{table}\centering\small
+\begin{tabular}{p{17em}r} 
+\bf Annotation unit & \bf Count \\\hline 
+Sentences in FN 1.5 & 2,780 \\ 
+Frame annotations in FN 1.5 & 23,940 \\ % new framenet (website): 27409
+Annotation density & 8.6 \\ \hline 
+PB-WSJ sentences &  38,594 \\ 
+PB-WSJ verb tokens & 74,977 \\ 
+Annotation density &  1.9 \\\hline
+SemLink PB-WSJ sentences with at least one mappable FN frame and argument & 12,382\\ 
+Mapped frame annotations & 15,323\\ 
+Annotation density & 1.2 \\
 \end{tabular}
+\caption{Comparison of annotation density}
+\label{tab:annoUnit}
 \end{table}
 
 
 
 The mappings we obtained increase the number of annotations for around 170 frames. Figure \ref{fig:framesBarchart} shows a stacked bar-chart plotting the annotations for every frame, sorted in decreasing order of additional frames obtained. The highest is around 1500 new annotations for the frame \fname{Statement}.
-\begin{figure*}
-\caption{The number of new annotations per frame obtained upon extracting the WSJ mapping from SemLink. The bars are coloured (red) to indicate the contribution from the new annotations. Only frames for which new annotations were found are shown.}
+\begin{figure*}\centering
 \includegraphics[scale=0.5]{framesBarchart.pdf}
+\caption{The number of new annotations per frame obtained upon extracting the WSJ mapping from SemLink. The bars are coloured (red) to indicate the contribution from the new annotations. Only frames for which new annotations were found are shown.}
 \label{fig:framesBarchart}
 \end{figure*}
 
 \subsection{Noisy SemLink annotations}
-Since SemLink was built, FrameNet has updated frame definitions, some new frames were introduced and old ones deleted or divided into finer categories, irrelevant predicates moved to proper frames etc. Hence some of the SemLink annotations are obsolete and sub-optimal. For example, the frame \fname{Statement} does not contain the target \texttt{complain.v} anymore as a new frame \fname{Complain} was introduced. There are around 3000 such instances with obsolete annotations. These can be detected easily and they are also not semantically absurd, but correcting these will require re-annotation on a case-by-case basis.
+Since SemLink was built, FrameNet has updated frame definitions, some new frames were introduced and old ones deleted or divided into finer categories, irrelevant predicates moved to proper frames etc. Hence some of the SemLink annotations are obsolete and sub-optimal. 
+For example, the frame \fname{Statement} no longer contains the lexical unit \luname{complain.v}, which has been moved to a new frame (\fname{Complain}). There are around 3000 such instances with obsolete annotations. These can be detected easily and they are also not semantically absurd, but correcting these will require re-annotation on a case-by-case basis.
 
-Additionally, there are some mistakes in some of the annotations due to the existence of multiple frame matches for a particular predicate. For example, in the sentence \textit{McMoRan Energy Partners will be \texttt{liquidated}}, the frame for \vpred{liquidate} is \fname{Killing} - all 14 occurrences of liquidate have this error. The sentence \textit{Speaker Jim Wright\ldots attempting to \texttt{direct} the president} has the frame annotation \fname{Behind\_the\_scenes}, which refers to film direction. There are 17 instances with this frame erroneously marked. These kind of errors are hard to detect. The SemLink mappings can thus not be used as gold-standard annotations to train models. One possibility is to use this data as low-confidence training data.
+Additionally, there are some mistakes in some of the annotations due to the existence of multiple frame matches for a particular predicate. 
+For example, in the sentence ``McMoRan Energy Partners will be \vpred{liquidated}'', 
+the frame for \vpred{liquidate} is \fname{Killing}---all 14 occurrences of liquidate have this error. 
+The sentence ``Speaker Jim Wright\ldots attempting to \vpred{direct} the president'' has the frame annotation \fname{Behind\_the\_scenes}, 
+which refers to film direction. There are 17 instances with this frame erroneously marked. These kind of errors are hard to detect. 
+The SemLink mappings can thus not be used as gold-standard annotations to train models. One possibility is to use this data as low-confidence training data.
 
-\section{Models for joint learning}
-This problem of learning from multiple resources can be formulated in different ways. We present here a spectrum of possible approaches, each relying either on a different methodology or manipulating the available data differently. For simplicity, let us assume there are two resources $D_1, D_2$. Let $X_1, X_2 \in \mathcal{X}$ represent the set of data instances (i.e sentences) from the two sources and $Y_1 \in \mathcal{Y}$, $Y_2 \in \mathcal{Y}'$ be the labels.
+\section{Models for joint learning}\label{sec:modeling}
+This problem of learning from multiple resources can be formulated in different ways. We present here a spectrum of possible approaches, each relying either on a different methodology or manipulating the available data differently. For simplicity, let us assume there are two resources, $D_1$ and $D_2$. Let $X_1, X_2 \in \mathcal{X}$ represent the set of data instances (i.e.~sentences) from the two sources and $Y_1 \in \mathcal{Y}$, $Y_2 \in \mathcal{Y}'$ be the labels.
 \begin{itemize}
-\item Learning a deterministic mapping $\phi : \mathcal{Y}' \rightarrow \mathcal{Y}$ between the label spaces from the two resources. Such a mapping can be used to transform the annotations from one resource into the labeling schema used by the other. We could then train a model using $\{X_1, Y_1\} \cup \{X_2, \phi(Y_2)\}$. The SemLink mappings we discussed earlier give us such a function $\phi$ that gives a limited and ambiguous mapping.
-\item A two-stage pipeline that trains a model on $D_1$ say $\theta_1$ and apply it on $X_2$. The output labels can be used as features along with $X_2$ to train the model $\theta_2$ on $D_2$. 
-\item A bootstrapping approach that uses co-training similar to \citep{clark03}, where we iteratively improve one model using the output from the other. This is the same as the pipeline approach described above, performed for several iterations. At iteration $t$, we obtain $\theta_1^t$ and apply it on $X_2$. The output labels are used as features along with $X_2$ to train the model $\theta_2^t$. In the next iteration $(t+1)$, the output labels of $\theta_2^t$ applied on $X_1$ can be used as features to train $\theta_1^{t+1}$.
-\item A multi-task learning based objective function that maximizes the log likelihood over the two data sources $D_1$ and $D_2$. The parameters from the two tasks can be coupled together using a feature transformation \citep{mtfl}, or based on feature correspondences learned using unlabeled data \citep{scl}.
+\item \textbf{Deterministically unifying the schemas for the training data.} With a mapping $\phi : \mathcal{Y}' \rightarrow \mathcal{Y}$ between the label spaces from the two resources, the annotations from one resource can be transformed into the labeling schema used by the other, in order to train a single model 
+on $\langle X_1, Y_1\rangle \cup \langle X_2, \phi(Y_2)\rangle$. The (limited and ambiguous) SemLink mappings discussed above are one possible choice of $\phi$; a mapping could also be learned.
+\item \textbf{Learning and decoding as a pipeline.} Training a source schema model on $D_1$ and applying it on $X_2$ to extract features for training a target model on $D_2$. 
+\Citet{johansson-13} calls this \emph{guided parsing}. 
+\item \textbf{Bootstrapping} with approaches such as co-training \citep{blum-98,clark03}, where two separate models are iteratively improved by 
+providing high-confidence pseudo-annotated training examples for each other. A similar approach is taken in \citet{zhou:2013} for dependency parsing.
+% or , where we iteratively improve one model using the output from the other. This is the same as the pipeline approach described above, performed for several iterations. At iteration $t$, we obtain $\theta_1^t$ and apply it on $X_2$. The output labels are used as features along with $X_2$ to train the model $\theta_2^t$. In the next iteration $(t+1)$, the output labels of $\theta_2^t$ applied on $X_1$ can be used as features to train $\theta_1^{t+1}$.
+\item \textbf{Optimizing a multi-task objective} with a loss function over the two data sources $D_1$ and $D_2$. 
+The feature spaces from the two tasks can be combined \citep{daume-07,johansson-13} or coupled together using a feature transformation \citep{mtfl,scl}.
 \end{itemize}
 
-\section{Evaluation}
-As indicated in the introduction, a model encompassing multiple resources can fill in various types of gaps in the FN annotations. It is infeasible to measure improvements for predicates which are not already frame targets in FN. For existing frame-predicates with no argument annotations, the SemLink mappings can be used as test data.
+%\section{Evaluation}
+%As indicated in the introduction, a model encompassing multiple resources can fill in various types of gaps in the FN annotations. It is infeasible to measure improvements for predicates which are not already frame targets in FN. For existing frame-predicates with no argument annotations, the SemLink mappings can be used as test data.
+
+\section{Conclusion}
+
+\nss{TODO}
 
 \section*{Acknowledgments}
 
 \bibliographystyle{aclnat}
-\setlength{\bibsep}{10pt}
+%\setlength{\bibsep}{10pt}
 {\fontsize{10}{12.25}\selectfont
 \bibliography{refs}}
 
