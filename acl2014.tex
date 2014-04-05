@@ -213,12 +213,12 @@
 
 % Space savers
 % From http://www.eng.cam.ac.uk/help/tpl/textprocessing/squeeze.html
-%\addtolength{\dbltextfloatsep}{-.5cm} % space between last top float or first bottom float and the text.
+\addtolength{\dbltextfloatsep}{-.5cm} % space between last top float or first bottom float and the text.
 %\addtolength{\intextsep}{-.5cm} % space left on top and bottom of an in-text float.
 %\addtolength{\abovedisplayskip}{-.5cm} % space before maths
 %\addtolength{\belowdisplayskip}{-.5cm} % space after maths
 %\addtolength{\topsep}{-.5cm} %space between first item and preceding paragraph
-%\setlength{\belowcaptionskip}{-.25cm}
+\setlength{\belowcaptionskip}{-.25cm}
 
 
 % customize \paragraph spacing
@@ -385,12 +385,12 @@ We observe that:
   an error in frame identification will likely produce incorrect argument analyses.
   \item \vpred{abolishing} is not identified as a target because it is absent from the FrameNet lexicon. 
   In principle, however, it should be recognized as evoking the \fname{Prohibiting} frame, which contains 
-  nearly synonymous verbs. SEMAFOR\nss{the demo version used for the figure?} attempts to disambiguate such OOV lexical items 
+  nearly synonymous verbs. SEMAFOR\finalversion{\nss{the demo version used for the figure?}} attempts to disambiguate such OOV lexical items 
   to existing frames \citep{das-acl2011}.
   \item \vpred{taxing} is not identified as a target because it, too, is absent from the FrameNet lexicon. 
   However, there is no apparent home for it in any existing frame; a \fname{Taxation} frame would have to be defined 
-  in the lexicon.\footnote{As part of the definition process the frame would be linked to related concepts that already have frames, 
-  such as \fname{Government\_institution}, \fname{Imposing\_obligation}, and \fname{Commerce\_collect}.}
+  in the lexicon.\longversion{\footnote{As part of the definition process the frame would be linked to related concepts that already have frames, 
+  such as \fname{Government\_institution}, \fname{Imposing\_obligation}, and \fname{Commerce\_collect}.}}
 \end{enumerate}
 
 All of these verbs are annotated in the PropBank corpus, which assigns a coarse sense number 
@@ -433,27 +433,27 @@ whereas PB-WSJ has 177~instances (that had an extractable argument mapping) of t
 verb senses according to SemLink, \vpred{hold.01} and \vpred{hold.06}.
 The frame \fname{Experiencer\_obj} has several predicates without any annotations, 
 for example \vpred{appeal}, \vpred{harass}, \vpred{worry}, and \vpred{boggle}. 
-The first three of these have annotations in the PB-WSJ data. 
+The first three of these have PB-WSJ annotations. 
 %\end{itemize}
 %Ideally, a joint learning system should also be able to suggest new targets for a frame based on the lexical similarity with the frame's existing targets.
 
 \subsection{SemLink}\label{sec:semlink}
 
-The SemLink database \citep{semlink} specifies mappings between PropBank, FrameNet, and VerbNet (VN). 
+The SemLink database \citep{semlink} specifies mappings between PropBank, FrameNet, and VerbNet. 
 It contains \emph{sense-level mappings} between VerbNet and each of the other resources; 
 because the senses in these resources may represent different interpretations and granularities of concepts, 
 the sense-level mappings may be one-to-one, one-to-many, or many-to-many.
 These mappings link PropBank and FrameNet indirectly via VerbNet. %, introducing additional coverage gaps and ambiguities.
 Second, SemLink provides some \emph{token-level parallel annotations} 
-for the three representations in a subset of the PB-WSJ text: hereafter SL-WSJ.
+for the 3~representations in a subset of the PB-WSJ text: hereafter SL-WSJ.
 
 We focus on using token-level SemLink version~1.2.2c annotations as a (disambiguated) mapping from PB to FN tokens.
 %In this work, we will focus on SEMAFOR as the target system whose performance we want to improve. We are hence interested in using the SemLink mappings to get FN compatible data. 
 %The type (a) mappings can be directly used to augment the FN annotations; in the next section we present an analysis on the quantity and usability of the available mappings. Using the type (b) annotations first requires disambiguating the frame-to-roleset labels and then aligning the predicate arguments of the roleset with those expected in the frame. Note that the two argument sets might be of different cardinality.
 Some statistics appear in \cref{tab:wsjstats,tab:annoUnit}. The first table summarizes the SemLink mappings in the SL-WSJ data. 
 Of 74,977 SL-WSJ verbs, a majority cannot be mapped to FN labels for various reasons. 
-Around 31\% of the predicates have the frame label \texttt{IN} (``indefinite'') where the mapping from VN to FN is ambiguous. 
-About 20\% of the instances are labeled \texttt{NF} (``no frame''), indicating a coverage gap in FrameNet.\nss{did SL annotators attempt to find frames for verbs not in FN?}
+Around 31\% of the predicates have the frame label \texttt{IN} (``indefinite'') where the mapping from VerbNet to FrameNet is ambiguous. 
+About 20\% of the instances are labeled \texttt{NF} (``no frame''), indicating a coverage gap in FrameNet.\finalversion{\nss{did SL annotators attempt to find frames for verbs not in FN?}}
 21\% of verbs have frame labels but no frame element annotations. 
 Most of these are predicates with modifier arguments. 
 Other arguments pointed to null anaphora that could not be resolved to overt arguments.
@@ -531,12 +531,14 @@ which refers to film direction. There are 17 instances with this frame erroneous
 The SemLink mappings can thus not be used as gold-standard annotations to train models. One possibility is to use this data as low-confidence training data.}
 
 \section{Modeling}\label{sec:modeling}
-This problem of learning from multiple resources can be formulated in different ways. We present here a spectrum of possible approaches, each relying either on a different methodology or manipulating the available data differently. For simplicity, let us assume there are two resources, $D_1$ and $D_2$. Let $X_1, X_2 \in \mathcal{X}$ represent the set of data instances (i.e.~sentences) from the two sources and $Y_1 \in \mathcal{Y}$, $Y_2 \in \mathcal{Y}'$ be the labels.
+This problem of learning from multiple resources can be formulated in different ways. We present here a spectrum of possible approaches. 
+%each relying either on a different methodology or manipulating the available data differently. 
+For simplicity, let us assume there are two resources, $D_1$ and $D_2$. Let $X_1, X_2 \in \mathcal{X}$ represent the set of data instances (i.e.~sentences) from the two sources and $Y_1 \in \mathcal{Y}$, $Y_2 \in \mathcal{Y}'$ be the labels.
 \begin{itemize}
 \item \textbf{Deterministically unifying the schemas for the training data.} With a mapping $\phi : \mathcal{Y}' \rightarrow \mathcal{Y}$ between the label spaces from the two resources, the annotations from one resource can be transformed into the labeling schema used by the other, in order to train a single model 
 on $\langle X_1, Y_1\rangle \cup \langle X_2, \phi(Y_2)\rangle$. The (limited and ambiguous) SemLink mappings discussed above are one possible choice of $\phi$; 
 a latent mapping could also be learned, treating the noisy correspondences in SemLink as evidence.
-\item \textbf{Learning and decoding as a pipeline.} Training a source schema model on $D_1$ and applying it on $X_2$ to extract features for training a target model on $D_2$. 
+\item \textbf{Learning and decoding as a pipeline.} Training a source model on $D_1$ and applying it on $X_2$ to extract features for training a target model on $D_2$. 
 \Citet{johansson-13} calls this \emph{guided parsing}. 
 \item \textbf{Bootstrapping} with approaches such as co-training \citep{blum-98,clark03}, where two separate models are iteratively improved by 
 providing high-confidence pseudo-annotated training examples for each other. A similar approach is taken in \citet{zhou:2013} for dependency parsing.
@@ -554,7 +556,10 @@ Based on our analysis, we can conclude that learning models from heterogeneous d
 is a promising direction for improving the performance of semantic parsing systems.
 With several learning frameworks at our disposal, we hope to develop an approach 
 that compensates for gaps in both lexical and corpus coverage to improve performance, particularly for the FrameNet task.
-\section*{Acknowledgments}
+
+\finalversion{\section*{Acknowledgments}
+
+\nss{TODO}}
 
 \bibliographystyle{aclnat}
 %\setlength{\bibsep}{10pt}
