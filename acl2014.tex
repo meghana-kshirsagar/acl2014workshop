@@ -401,29 +401,67 @@ provided that some other verbs in the same frame \emph{are} present in both PB a
 \label{fig:semaforOutput}
 \end{figure*}
 
-\section{Lexical coverage}\label{sec:coverage}
+\section{Quantitative analysis}\label{sec:quant}
 
-The following list indicates the scenarios where a joint model based on both FrameNet and PropBank data can improve frame-semantic parsing accuracies in a system like SEMAFOR. The examples and numbers presented below were obtained from the latest FrameNet release (1.5) and for PB we consider only the WSJ section of the annotations.
-\begin{itemize}
-\item Frames with none or very few annotations in FN. The frame \fname{Manipulation} does not have any annotations for the verb \vpred{hold}, whereas PB-WSJ has 117 instances (that had an extractable argument mapping) for this frame-target combination. The frame \fname{Experiencer\_obj} has several predicates without any annotations, for example \vpred{appeal}, \vpred{harass}, \vpred{worry}, and \vpred{boggle}. The first three of these have annotations in the PB-WSJ data. There are 984 such predicates in FN that have been assigned to frames, but with no sentence annotations available.
-\item Frames with few known targets or targets with no associated frames. 
-For example, the frame \fname{Giving} has 19 known verbs as targets in FN. 
-Many (near-)synonyms of \vpred{give} such as \vpred{allot}, \vpred{assign}, \vpred{designate}, and \vpred{allocate}, are not present in FN. 
-Overall, there are 475 verbs in the PB WSJ data that are not targets for any frame in FrameNet. Some examples are: \vpred{involve}, \vpred{lurk}, \vpred{nominate}, \vpred{ladle}, \vpred{entice}, and \vpred{bank}.
-\end{itemize}
+Here we quantify the extent to which the PropBank (PB) and FrameNet (FN) resources 
+do or do not overlap. We obtain verb coverage measurements from version~1.5 of FrameNet 
+and the PropBank WSJ (PB-WSJ) annotations in version~5.0 of OntoNotes \citep{ontonotes}. 
+
+\subsection{Lexical coverage}\label{sec:coverage}
+
+% The following list indicates the scenarios where a joint model based on both FrameNet and PropBank 
+%  can improve frame-semantic parsing accuracies in a system like SEMAFOR. 
+%  The examples and numbers presented below were obtained from the latest FrameNet release (1.5) 
+%  and for PB we consider only the WSJ section of the annotations.
+%\begin{itemize}
+
+As noted above, type and token coverage is an advantage that PB has over FN, at least for verbs.
+
+\paragraph{Type coverage.}
+Overall, there are 1,260 verb types in the PB-WSJ data that are not present at all in the FN lexicon. 
+These include \vpred{involve}, \vpred{lurk}, \vpred{nominate}, \vpred{ladle}, \vpred{entice}, and \vpred{bank}.
+This is partially due to missing frames, and partially due to coverage gaps within existing frames:
+e.g., the \fname{Giving} frame has 19 known verbs as targets in FN, but  
+many plausible members of this frame---\vpred{allot}, \vpred{assign}, \vpred{designate}, \vpred{allocate}, etc.---are not present in any FN frame. 
+
+\paragraph{Corpus support for lexical types.} 984 of 4,894 verb senses (frame-disambiguated lexical units) in the FN lexicon 
+never occur in the full-text annotations; many more occur only a few times.\finalversion{\nss{how many verb *types* occur at least once in PB?}}
+For instance, the \fname{Manipulation} sense of \vpred{hold} is unattested in the full-text annotations,
+whereas PB-WSJ has 177~instances (that had an extractable argument mapping) of the corresponding 
+verb senses according to SemLink, \vpred{hold.01} and \vpred{hold.06}.
+The frame \fname{Experiencer\_obj} has several predicates without any annotations, 
+for example \vpred{appeal}, \vpred{harass}, \vpred{worry}, and \vpred{boggle}. 
+The first three of these have annotations in the PB-WSJ data. 
+%\end{itemize}
 %Ideally, a joint learning system should also be able to suggest new targets for a frame based on the lexical similarity with the frame's existing targets.
 
-\section{SemLink mappings}\label{sec:semlink}
+\subsection{SemLink}\label{sec:semlink}
 
-Linguistic resources to map the different annotations have been built, but to a very limited extent. SemLink \citep{semlink} is one such database that maps and unifies different lexical resources of semantic information: such as PropBank (PB), FrameNet (FN), VerbNet (VN). The mappings that SemLink provides are available at two different levels: (a) sentence level parallel annotations---the WSJ section of the PB data has been annotated with the appropriate frames and frame-elements as well as VerbNet classes wherever possible, thereby giving detailed PB, VN and FN annotations for each sentence (b) concept/roleset level mappings---these are coarse-level mappings defined between a PB roleset and a VN roleset or a FN frame and a VN roleset. These mappings can be one-to-one, one-to-many or many-to-many depending on the semantic generality of the involved rolesets. To go from a PB roleset to a FN frame, one has to go via the VN roleset first.
+The SemLink database \citep{semlink} specifies mappings between PropBank, FrameNet, and VerbNet (VN). 
+It contains \emph{sense-level mappings} between VerbNet and each of the other resources; 
+because the senses in these resources may represent different interpretations and granularities of concepts, 
+the sense-level mappings may be one-to-one, one-to-many, or many-to-many.
+These mappings link PropBank and FrameNet indirectly via VerbNet. %, introducing additional coverage gaps and ambiguities.
+Second, SemLink provides some \emph{token-level parallel annotations} 
+for the three representations in a subset of the PB-WSJ text: hereafter SL-WSJ.
 
-In this work, we will focus on SEMAFOR as the target system whose performance we want to improve. We are hence interested in using the SemLink mappings to get FN compatible data. The type (a) mappings can be directly used to augment the FN annotations; in the next section we present an analysis on the quantity and usability of the available mappings. Using the type (b) annotations first requires disambiguating the frame-to-roleset labels and then aligning the predicate arguments of the roleset with those expected in the frame. Note that the two argument sets might be of different cardinality.
+We focus on using token-level SemLink version~1.2.2c annotations as a (disambiguated) mapping from PB to FN tokens.
+%In this work, we will focus on SEMAFOR as the target system whose performance we want to improve. We are hence interested in using the SemLink mappings to get FN compatible data. 
+%The type (a) mappings can be directly used to augment the FN annotations; in the next section we present an analysis on the quantity and usability of the available mappings. Using the type (b) annotations first requires disambiguating the frame-to-roleset labels and then aligning the predicate arguments of the roleset with those expected in the frame. Note that the two argument sets might be of different cardinality.
+Some statistics appear in \cref{tab:wsjstats,tab:annoUnit}. The first table summarizes the SemLink mappings in the SL-WSJ data. 
+Of 74,977 SL-WSJ verbs, a majority cannot be mapped to FN labels for various reasons. 
+Around 31\% of the predicates have the frame label \texttt{IN} (``indefinite'') where the mapping from VN to FN is ambiguous. 
+About 20\% of the instances are labeled \texttt{NF} (``no frame''), indicating a coverage gap in FrameNet.\nss{did SL annotators attempt to find frames for verbs not in FN?}
+21\% of verbs have frame labels but no frame element annotations. 
+Most of these are predicates with modifier arguments. 
+Other arguments pointed to null anaphora that could not be resolved to overt arguments.
+This leaves 15,323 mappable instances with at least one overt argument, or 20\% of SL-WSJ verbs.
 
-
-We present some statistics of the data resources in Tables \ref{tab:wsjstats} and \ref{tab:annoUnit}. The first table summarizes the SemLink mappings for the PB WSJ data. The total number of annotated PB instances are 74977, a majority of which do not have the corresponding FN labels due to various difficulties in mapping them. Around 31\% of the predicates have the frame label \texttt{IN} meaning ``indefinite''. For these cases the mapping from VN to FN does not clearly indicate which Frame the instance should be. About 20\% of the instances are labeled \texttt{NF} or ``no frame'' as FrameNet currently does not have an appropriate frame class for the semantic concept represented by the PB predicate. Of the remaining, 21\% are incomplete as they only have frame labels and no argument annotations. Most of these are predicates with modifier arguments. This leaves about 29\% usable mappings, 9\% of which had argument pointer and other issues. Eventually, we were able to extract about 15323 instances.
-
-The second table compares the extracted PB-WSJ annotations with the original FN annotations (version~1.5) used to train the SEMAFOR model. The number of annotations at the sentence-level and frame-level are shown. It is evident that FN has a much higher annotation density---around 9 frames per sentence, as compared to around 1.2 for the PB-derived data.
-
+The second table compares the extracted SL-WSJ annotations with the full-text FN annotations used to train SEMAFOR. 
+%The number of annotations at the sentence-level and frame-level are shown. 
+It seems that the PB sentences contain a higher rate of annotated verbs per sentence than FN, 
+likely due in part to gaps in coverage for FN.\footnote{Other possible explanations include domain differences and different conventions for light verbs.}
+There is some dropoff in annotation density when mapping from PB to FN due to coverage gaps in SemLink.
 
 \begin{table}\centering\small
 \begin{tabular}{@{}>{\raggedright}p{13em}@{~~}r@{~~}r@{}}
@@ -442,45 +480,60 @@ Total  & 74,977 & 100\% \\
 \begin{table}\centering\small
 \begin{tabular}{p{17em}r} 
 \bf Annotation unit & \bf Count \\\hline 
-Sentences in FN 1.5 & 2,780 \\ 
-Frame annotations in FN 1.5 & 23,940 \\ % new framenet (website): 27409
-Annotation density & 8.6 \\ \hline 
-PB-WSJ sentences &  38,594 \\ 
-PB-WSJ verb tokens & 74,977 \\ 
-Annotation density &  1.9 \\\hline
-SemLink PB-WSJ sentences with at least one mappable FN frame and argument & 12,382\\ 
+Sentences in FN 1.5 & 5,946\finalversion{\nss{double-check. p. 18 of CL article suggests 5676. unclear whether that includes dev set}} \\ 
+%Frame annotations in FN 1.5 (all POSes) & 23,940 \\ % new framenet (website): 27409
+%Annotation density & 8.6 \\ \hline 
+FN frame annotations for verb predicates & 6,993 \\
+Verb annotation density & 1.2 \\ \hline
+%PB-WSJ sentences &  38,594 \\ % this is PB 1.0 
+%PB-WSJ verb tokens & 74,977 \\ % this is PB 1.0
+PB-WSJ sentences &  35,426 \\ 
+PB-WSJ verb tokens & 96,517 \\ % 103630 all POSes
+Verb annotation density &  2.7 \\\hline
+SL-WSJ sentences with at least one mappable FN frame and argument & 12,382\\ 
 Mapped frame annotations & 15,323\\ 
-Annotation density & 1.2 \\
+Verb annotation density & 1.2 \\
 \end{tabular}
-\caption{Comparison of annotation density}
+\caption{Comparison of annotation density\finalversion{\nss{consider showing: predicates/sentence, predicates/word, predicates/verb, args/predicate}}}
 \label{tab:annoUnit}
 \end{table}
 
 
 
-The mappings we obtained increase the number of annotations for around 170 frames. Figure \ref{fig:framesBarchart} shows a stacked bar-chart plotting the annotations for every frame, sorted in decreasing order of additional frames obtained. The highest is around 1500 new annotations for the frame \fname{Statement}.
+The mappings we obtained increase the number of annotations for around 170 frames. 
+Figure \ref{fig:framesBarchart} shows a stacked bar chart plotting the annotations for every frame, 
+sorted in decreasing order of additional frames obtained. The highest is around 1,500 new annotations for the \fname{Statement} frame.
 \begin{figure*}\centering
 \includegraphics[scale=0.5]{framesBarchart.pdf}
 \caption{The number of new annotations per frame obtained upon extracting the WSJ mapping from SemLink. The bars are coloured (red) to indicate the contribution from the new annotations. Only frames for which new annotations were found are shown.}
 \label{fig:framesBarchart}
 \end{figure*}
 
-\subsection{Noisy SemLink annotations}
-Since SemLink was built, FrameNet has updated frame definitions, some new frames were introduced and old ones deleted or divided into finer categories, irrelevant predicates moved to proper frames etc. Hence some of the SemLink annotations are obsolete and sub-optimal. 
-For example, the frame \fname{Statement} no longer contains the lexical unit \luname{complain.v}, which has been moved to a new frame (\fname{Complain}). There are around 3000 such instances with obsolete annotations. These can be detected easily and they are also not semantically absurd, but correcting these will require re-annotation on a case-by-case basis.
+\paragraph{Noise in SemLink.}
+Some of the FN information in SemLink is out of date due to subsequent changes in FrameNet.
+For example, the frame \fname{Statement} no longer contains the lexical unit \luname{complain.v}, 
+which has been moved to a new frame (\fname{Complaining}). 
+There are around 3,000 such instances with obsolete annotations. 
+Some of them may be updated automatically using the Reframing\_mapping pointers in FrameNet, 
+but some may have to be reannotated.
+There are some erroneous FN annotations as well: e.g., all 14~instances of \vpred{liquidate} are 
+labeled \fname{Killing}, despite being used in the financial sense; and in 17~cases \vpred{direct} 
+is erroneously marked as \fname{Behind\_the\_scenes} (i.e., film direction). 
+Therefore, we suspect that heavy reliance on the SemLink annotations in a model will be a source of precision errors.
 
-Additionally, there are some mistakes in some of the annotations due to the existence of multiple frame matches for a particular predicate. 
+\finalversion{Additionally, there are some mistakes in some of the annotations due to the existence of multiple frame matches for a particular predicate. 
 For example, in the sentence ``McMoRan Energy Partners will be \vpred{liquidated}'', 
 the frame for \vpred{liquidate} is \fname{Killing}---all 14 occurrences of liquidate have this error. 
 The sentence ``Speaker Jim Wright\ldots attempting to \vpred{direct} the president'' has the frame annotation \fname{Behind\_the\_scenes}, 
 which refers to film direction. There are 17 instances with this frame erroneously marked. These kind of errors are hard to detect. 
-The SemLink mappings can thus not be used as gold-standard annotations to train models. One possibility is to use this data as low-confidence training data.
+The SemLink mappings can thus not be used as gold-standard annotations to train models. One possibility is to use this data as low-confidence training data.}
 
 \section{Models for joint learning}\label{sec:modeling}
 This problem of learning from multiple resources can be formulated in different ways. We present here a spectrum of possible approaches, each relying either on a different methodology or manipulating the available data differently. For simplicity, let us assume there are two resources, $D_1$ and $D_2$. Let $X_1, X_2 \in \mathcal{X}$ represent the set of data instances (i.e.~sentences) from the two sources and $Y_1 \in \mathcal{Y}$, $Y_2 \in \mathcal{Y}'$ be the labels.
 \begin{itemize}
 \item \textbf{Deterministically unifying the schemas for the training data.} With a mapping $\phi : \mathcal{Y}' \rightarrow \mathcal{Y}$ between the label spaces from the two resources, the annotations from one resource can be transformed into the labeling schema used by the other, in order to train a single model 
-on $\langle X_1, Y_1\rangle \cup \langle X_2, \phi(Y_2)\rangle$. The (limited and ambiguous) SemLink mappings discussed above are one possible choice of $\phi$; a mapping could also be learned.
+on $\langle X_1, Y_1\rangle \cup \langle X_2, \phi(Y_2)\rangle$. The (limited and ambiguous) SemLink mappings discussed above are one possible choice of $\phi$; 
+a latent mapping could also be learned, treating the noisy correspondences in SemLink as evidence.
 \item \textbf{Learning and decoding as a pipeline.} Training a source schema model on $D_1$ and applying it on $X_2$ to extract features for training a target model on $D_2$. 
 \Citet{johansson-13} calls this \emph{guided parsing}. 
 \item \textbf{Bootstrapping} with approaches such as co-training \citep{blum-98,clark03}, where two separate models are iteratively improved by 
@@ -495,8 +548,10 @@ The feature spaces from the two tasks can be combined \citep{daume-07,johansson-
 
 \section{Conclusion}
 
-\nss{TODO}
-
+Based on our analysis, we can conclude that learning models from heterogeneous data sources 
+is a promising direction for improving the performance of semantic parsing systems.
+With several learning frameworks at our disposal, we hope to develop an approach 
+that compensates for gaps in both lexical and corpus coverage to improve performance, particularly for the FrameNet task.
 \section*{Acknowledgments}
 
 \bibliographystyle{aclnat}
