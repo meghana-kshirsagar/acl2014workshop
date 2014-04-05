@@ -278,10 +278,10 @@
 \hyphenation{per-cepts}
 \hyphenation{post-edit-ing}
 
-\newcommand{\vpred}[1]{\textit{#1}} % verb predicate
+\newcommand{\vpred}[1]{\textbf{#1}} % verb predicate
 \newcommand{\fname}[1]{\textsc{#1}} % frame name
-\newcommand{\rname}[1]{\textbf{#1}} % role/frame element label
-\newcommand{\luname}[1]{\textit{#1}} % lexical unit name (predicate+POS)
+\newcommand{\rname}[1]{\textsl{#1}} % role/frame element label
+\newcommand{\luname}[1]{\textbf{#1}} % lexical unit name (predicate+POS)
 
 %\setlength\titlebox{5cm}
 
@@ -357,9 +357,13 @@ An example illustrating the need for models that integrate resources is as follo
 \vpred{Taxing} wealthy individuals \vpred{appeals} to liberals; Brown \vpred{urges} \vpred{abolishing} regulations.
 %\textit{The award \texttt{celebrates} businesses that \texttt{innovate} products which \texttt{appeal} to social good.}
 \end{quote}
-The four verbal predicates in this sentence are italicized. 
-\Cref{fig:semaforOutput} shows the frame-semantic parse predicted by SEMAFOR. 
-We observe:
+The four verbal predicates in this sentence are bolded. %\nss{bold for consistency with SEMAFOR output} 
+\Cref{fig:semaforOutput} shows the frame-semantic parse in which SEMAFOR 
+has predicted frame-evoking \emph{targets} (predicate tokens), 
+\emph{frame labels} (displayed immediately below the targets), 
+\emph{argument spans} (red lines) for each frame, and 
+\emph{argument labels} (frame element names).
+We observe that:
 \begin{enumerate}
   \item \vpred{urges} is mapped correctly to a frame, and its arguments to frame elements.
   \item \vpred{individuals} receives the correct frame label, \fname{People}, but is missing an argument 
