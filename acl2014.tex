@@ -307,7 +307,9 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-A number of semantic annotation efforts have produced a variety of annotated corpora, capturing various aspects of semantic knowledge in different formalisms. Due to to the cost of these annotation efforts and the relatively small amount of semantically annotated corpora, we argue it is advantageous to be able to leverage as much annotated data as possible. This work presents a preliminary exploration of the opportunities and challenges of learning semantic parsers from heterogeneous semantic annotation sources. We primarily focus on two semantic resources: FrameNet and PropBank with the goal of improving frame semantic parsing in Semafor. Our analysis of the two data sources clearly underlines the benefits that can be reaped by combining information across them.
+A number of semantic annotation efforts have produced a variety of annotated corpora, capturing various aspects of semantic knowledge in different formalisms. Due to to the cost of these annotation efforts and the relatively small amount of semantically annotated corpora, we argue it is advantageous to be able to leverage as much annotated data as possible. This work presents a preliminary exploration of the opportunities and challenges of learning semantic parsers from heterogeneous semantic annotation sources. 
+We primarily focus on two semantic resources, FrameNet and PropBank, with the goal of improving frame-semantic parsing. 
+Our analysis of the two data sources highlights the benefits that can be reaped by combining information across them.
 \end{abstract}
 
 \section{Introduction}
@@ -319,8 +321,8 @@ Here, we consider how we might best leverage such heterogenous resources to impr
 so as to let semantic resources created at considerable cost not go to waste.
 
 Supervised semantic parsers are usually trained with the representation and annotations from a single resource. 
-For instance, SEMAFOR \citep{semafor,semafor-14} is a frame-semantic parser
-trained on the full-text annotated corpus of FrameNet. 
+For instance, SEMAFOR \citep{semafor,semafor-14} is a state-of-the-art frame-semantic parser
+trained on the full text annotated corpus of FrameNet. 
 PropBank has likewise served as the training resource for semantic role labeling (SRL) systems (e.g., \citealp{illinoisSRL}; see \citealp{palmer-10} for a review). 
 FrameNet and PropBank seek to encode very similar aspects of meaning, including event predicates 
 and their labeled arguments; yet the two projects have developed different representations, lexicons, 
@@ -335,31 +337,35 @@ Moreover, the annotated corpora of FrameNet and PropBank capture different domai
 % These resources also differ in the granularity of the annotated data---FrameNet frames 
 % are semantically finer-grained as compared to the PropBank rolesets. 
 As such, the two resources can be seen as partially overlapping but partially complementary.
-There exists another resource, SemLink that provides a mapping between the labels from FN and PB. However, based on our
-analysis of this resource (presented in Section \ref{sec:semlink}) the mapping has a very small coverage, is ambiguous and noisy in some cases. This limits our ability to tap into this resource.
-
-We hypothesize that systems could exploit this complementarity to gain robustness at semantic analysis. 
-Encouragingly, some studies of \emph{syntactic} dependency parsing have demonstrated that divergent treebanks can be leveraged 
-to improve parsing quality \citep{zhou:2013,johansson-13}.
-A motivating example appears in \cref{sec:example}, followed by quantative analysis of the resources in \cref{sec:quant}.
-
-The problem of combining the knowledge across these resources can be viewed as a 
-transfer learning or joint learning problem. 
-%If we treat the annotation schema of each resource as one label space, then we can formulate this 
-%as a multitask learning problem across tasks with different label spaces. 
-%The goal of a system should then be to learn a model over the different label spaces. 
-This problem also manifests itself in the information extraction community, where there are multiple knowledge bases conforming to different ontologies \citep[e.g.,][]{riedel-13}.  
-We consider several possible modeling frameworks below in \cref{sec:modeling}. 
 
 \begin{figure*}\centering
 \includegraphics[width=.8\textwidth]{tax_example_short.jpg}
-\caption{Frame semantic parse from SEMAFOR for a constructed example sentence.}
+\caption{Frame-semantic parse from SEMAFOR for a constructed example sentence.}
 \label{fig:semaforOutput}
 \end{figure*}
 
 
+We hypothesize that systems could exploit this complementarity to gain robustness at semantic analysis. 
+Encouragingly, some studies of \emph{syntactic} dependency parsing have demonstrated that divergent treebanks can be leveraged 
+to improve parsing quality \citep{zhou:2013,johansson-13}.
+A motivating example appears in \cref{sec:example}, followed by quantitative analysis of the resources in \cref{sec:quant}.
+
+Initially, we had planned to use a third resource, SemLink, which provides mappings between the labels from FN and PB. However, based on our
+analysis of this resource (presented in \cref{sec:semlink}), the mapping suffers from low coverage, and is ambiguous and noisy in some cases. 
+Thus, our ability to map between the FN and PB representations via SemLink alone is limited.
+Instead, the problem of combining the knowledge across these resources can be viewed as a 
+transfer learning or joint learning problem (possibly using SemLink mappings as soft evidence). 
+%If we treat the annotation schema of each resource as one label space, then we can formulate this 
+%as a multitask learning problem across tasks with different label spaces. 
+%The goal of a system should then be to learn a model over the different label spaces. 
+Similar problems are faced in information extraction, where there are often multiple knowledge bases containing related information but conforming to different ontologies \citep[e.g.,][]{riedel-13}.  
+We consider several possible modeling frameworks below in \cref{sec:modeling}. 
+
+
+
 \section{Example}\label{sec:example}
-Here we show the output parse on an example sentence upon applying SEMAFOR, which is a frame semantic parsing system based on FrameNet. We will focus on the parse errors that are a result of the gaps in FN annotations.
+Here we show the output parse from SEMAFOR (a frame-semantic parsing system based on FrameNet) for an example sentence. 
+We will focus on the parse errors that are a result of the gaps in FN annotations.
 \begin{quote}
 \vpred{Taxing} wealthy individuals \vpred{appeals} to liberals; Brown \vpred{urges} \vpred{abolishing} regulations.
 %\textit{The award \texttt{celebrates} businesses that \texttt{innovate} products which \texttt{appeal} to social good.}
@@ -371,11 +377,13 @@ has predicted frame-evoking \emph{targets} (predicate tokens),
 \emph{argument spans} (red lines) for each frame, and 
 \emph{argument labels} (frame element names).
 \begin{enumerate}
- % \item \vpred{urges} is mapped correctly to a frame, and its arguments to frame elements.
- % \item \vpred{individuals} receives the correct frame label, \fname{People}, but is missing an argument 
- % (``wealthy'' should fill the \rname{Descriptor} frame element). In other wordings of this sentence, 
- % ``wealthy'' was correctly identified as an argument to \fname{People}, but incorrectly labeled 
- % with the \rname{Ethnicity} frame element. 
+\item \vpred{urges} is mapped correctly to a frame, and its arguments to frame elements.
+\item \vpred{individuals} receives the correct frame label, \fname{People}, but is missing an argument
+(``wealthy'' should fill the \rname{Descriptor} frame element). In other wordings of this sentence,
+``wealthy'' was correctly identified as an argument to \fname{People}, but incorrectly labeled
+with the \rname{Ethnicity} frame element.
+% the above were commented out, but that throws off the numbering from the discussion below and 
+% the point that we should care about arg ID 
   \item \vpred{appeals} is annotated with the wrong frame label. The parse suggests that somebody is 
   making an appeal to liberals, whereas the correct analysis should use the \fname{Experiencer\_obj} frame 
   to represent that an idea (taxing wealthy individuals) provokes an emotional response on the part of liberals. 
@@ -440,7 +448,7 @@ The SemLink database \citep{semlink} specifies mappings between PropBank, FrameN
 We analyzed the mappings between PropBank and FrameNet in order to determine their reliability in building a joint model.
 
 SemLink contains two types of mappings. The \emph{sense-level mappings} give correspondences between the concepts
-from each resource -- i.e between `frames' from FN, `rolesets' from PB and `roles' from VN. 
+from each resource---i.e., between `frames' from FN, `rolesets' from PB, and `roles' from VN. 
 Since they map different interpretations and granularities 
 of concepts, the sense-level mappings may be one-to-one, one-to-many, or many-to-many.
 PropBank and FrameNet are mapped indirectly via VerbNet. %, introducing additional coverage gaps and ambiguities.
