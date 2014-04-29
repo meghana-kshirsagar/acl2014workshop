@@ -213,12 +213,12 @@
 
 % Space savers
 % From http://www.eng.cam.ac.uk/help/tpl/textprocessing/squeeze.html
-\addtolength{\dbltextfloatsep}{-.5cm} % space between last top float or first bottom float and the text.
+%\addtolength{\dbltextfloatsep}{-.5cm} % space between last top float or first bottom float and the text.
 %\addtolength{\intextsep}{-.5cm} % space left on top and bottom of an in-text float.
 %\addtolength{\abovedisplayskip}{-.5cm} % space before maths
 %\addtolength{\belowdisplayskip}{-.5cm} % space after maths
 %\addtolength{\topsep}{-.5cm} %space between first item and preceding paragraph
-\setlength{\belowcaptionskip}{-.25cm}
+%\setlength{\belowcaptionskip}{-.25cm}
 
 
 % customize \paragraph spacing
@@ -293,23 +293,21 @@
 
 \title{Leveraging Heterogeneous Data Sources for Relational Semantic Parsing}
 
-\author{First Author \\
-  Affiliation / Address line 1 \\
-  Affiliation / Address line 2 \\
-  Affiliation / Address line 3 \\
-  {\tt email@domain} \\\And
-  Second Author \\
-  Affiliation / Address line 1 \\
-  Affiliation / Address line 2 \\
-  Affiliation / Address line 3 \\
-  {\tt email@domain} \\}
+\author{Meghana Kshirsagar
+   \qquad
+  Nathan Schneider
+   \qquad
+  Chris Dyer \\
+  Language Technologies Institute \\
+  Carnegie Mellon University, Pittsburgh PA\\
+  {\tt \{mkshirsa,nschneid,cdyer\}@cs.cmu.edu} \\}
 
 \date{}
 
 \begin{document}
 \maketitle
 \begin{abstract}
-A number of semantic annotation efforts have produced a variety of annotated corpora, capturing various aspects of semantic knowledge in different formalisms. Due to to the cost of these annotation efforts and the relatively small amount of semantically annotated corpora, we argue it is advantageous to be able to leverage as much annotated data as possible. This work presents a preliminary exploration of the opportunities and challenges of learning semantic parsers from heterogeneous semantic annotation sources. 
+A number of semantic annotation efforts have produced a variety of annotated corpora, capturing various aspects of semantic knowledge in different formalisms. Due to to the cost of these annotation efforts and the relatively small amount of semantically annotated corpora, we argue it is advantageous to be able to leverage as much annotated data as possible. This work presents a preliminary exploration of the opportunities and challenges of learning semantic parsers from heterogeneous semantic annotation sources. We primarily focus on two semantic resources: FrameNet and PropBank with the goal of improving frame semantic parsing in Semafor. Our analysis of the two data sources clearly underlines the benefits that can be reaped by combining information across them.
 \end{abstract}
 
 \section{Introduction}
@@ -337,6 +335,9 @@ Moreover, the annotated corpora of FrameNet and PropBank capture different domai
 % These resources also differ in the granularity of the annotated data---FrameNet frames 
 % are semantically finer-grained as compared to the PropBank rolesets. 
 As such, the two resources can be seen as partially overlapping but partially complementary.
+There exists another resource, SemLink that provides a mapping between the labels from FN and PB. However, based on our
+analysis of this resource (presented in Section \ref{sec:semlink}) the mapping has a very small coverage, is ambiguous and noisy in some cases. This limits our ability to tap into this resource.
+
 We hypothesize that systems could exploit this complementarity to gain robustness at semantic analysis. 
 Encouragingly, some studies of \emph{syntactic} dependency parsing have demonstrated that divergent treebanks can be leveraged 
 to improve parsing quality \citep{zhou:2013,johansson-13}.
@@ -358,8 +359,7 @@ We consider several possible modeling frameworks below in \cref{sec:modeling}.
 
 
 \section{Example}\label{sec:example}
-
-An example illustrating the need for models that integrate resources is as follows:
+Here we show the output parse on an example sentence upon applying SEMAFOR, which is a frame semantic parsing system based on FrameNet. We will focus on the parse errors that are a result of the gaps in FN annotations.
 \begin{quote}
 \vpred{Taxing} wealthy individuals \vpred{appeals} to liberals; Brown \vpred{urges} \vpred{abolishing} regulations.
 %\textit{The award \texttt{celebrates} businesses that \texttt{innovate} products which \texttt{appeal} to social good.}
@@ -370,23 +370,20 @@ has predicted frame-evoking \emph{targets} (predicate tokens),
 \emph{frame labels} (displayed immediately below the targets), 
 \emph{argument spans} (red lines) for each frame, and 
 \emph{argument labels} (frame element names).
-We observe that:
 \begin{enumerate}
-  \item \vpred{urges} is mapped correctly to a frame, and its arguments to frame elements.
-  \item \vpred{individuals} receives the correct frame label, \fname{People}, but is missing an argument 
-  (``wealthy'' should fill the \rname{Descriptor} frame element). In other wordings of this sentence, 
-  ``wealthy'' was correctly identified as an argument to \fname{People}, but incorrectly labeled 
-  with the \rname{Ethnicity} frame element. 
-  \item \vpred{appeals} is correctly identified as a target, but the wrong frame label is chosen 
-  (a sense disambiguation error). The parse suggests that somebody is making an appeal to liberals, 
-  whereas the correct analysis would use the \fname{Experiencer\_obj} frame to represent that an idea
-  (taxing wealthy individuals) provokes an emotional response on the part of liberals. 
-  Because the inventory of valid arguments is different for each frame, and SEMAFOR predicts frame labels first, 
-  an error in frame identification will likely produce incorrect argument analyses.
-  \item \vpred{abolishing} is not identified as a target because it is absent from the FrameNet lexicon. 
+ % \item \vpred{urges} is mapped correctly to a frame, and its arguments to frame elements.
+ % \item \vpred{individuals} receives the correct frame label, \fname{People}, but is missing an argument 
+ % (``wealthy'' should fill the \rname{Descriptor} frame element). In other wordings of this sentence, 
+ % ``wealthy'' was correctly identified as an argument to \fname{People}, but incorrectly labeled 
+ % with the \rname{Ethnicity} frame element. 
+  \item \vpred{appeals} is annotated with the wrong frame label. The parse suggests that somebody is 
+  making an appeal to liberals, whereas the correct analysis should use the \fname{Experiencer\_obj} frame 
+  to represent that an idea (taxing wealthy individuals) provokes an emotional response on the part of liberals. 
+  \item \vpred{abolishing} is not associated with any frame label, because it is absent from the FrameNet lexicon. 
   In principle, however, it should be recognized as evoking the \fname{Prohibiting} frame, which contains 
-  nearly synonymous verbs. SEMAFOR\finalversion{\nss{the demo version used for the figure?}} attempts to disambiguate such OOV lexical items 
-  to existing frames \citep{das-acl2011}.
+  synonymous verbs. 
+ % SEMAFOR\finalversion{\nss{the demo version used for the figure?}} attempts to disambiguate such OOV lexical items 
+ % to existing frames \citep{das-acl2011}.
   \item \vpred{taxing} is not identified as a target because it, too, is absent from the FrameNet lexicon. 
   However, there is no apparent home for it in any existing frame; a \fname{Taxation} frame would have to be defined 
   in the lexicon.\longversion{\footnote{As part of the definition process the frame would be linked to related concepts that already have frames, 
@@ -406,7 +403,7 @@ provided that some other verbs in the same frame \emph{are} present in both PB a
 \section{Quantitative analysis}\label{sec:quant}
 
 Here we quantify the extent to which the PropBank (PB) and FrameNet (FN) resources 
-do or do not overlap. We obtain verb coverage measurements from version~1.5 of FrameNet 
+do or do not overlap. The analysis shows examples where gaps in one resource can be supplemented using information from the other. We obtain verb coverage measurements from version~1.5 of FrameNet 
 and the PropBank WSJ (PB-WSJ) annotations in version~5.0 of OntoNotes \citep{ontonotes}. 
 
 \subsection{Lexical coverage}\label{sec:coverage}
@@ -422,9 +419,10 @@ As noted above, type and token coverage is an advantage that PB has over FN, at 
 \paragraph{Type coverage.}
 Overall, there are 1,260 verb types in the PB-WSJ data that are not present at all in the FN lexicon. 
 These include \vpred{involve}, \vpred{lurk}, \vpred{nominate}, \vpred{ladle}, \vpred{entice}, and \vpred{bank}.
-This is partially due to missing frames, and partially due to coverage gaps within existing frames:
-e.g., the \fname{Giving} frame has 19 known verbs as targets in FN, but  
-many plausible members of this frame---\vpred{allot}, \vpred{assign}, \vpred{designate}, \vpred{allocate}, etc.---are not present in any FN frame. 
+Hence a model that uses exclusively FrameNet data for training will not be able to correctly parse sentences 
+containing these verb types.
+There are also coverage gaps within existing frames: e.g., the \fname{Giving} frame has 19 known verbs as targets in FN, but  
+many plausible members of this frame---\vpred{allot}, \vpred{assign}, \vpred{designate}, \vpred{allocate}, etc.---are not associated with any FN frame and do not appear in FN. Using the sentence annotations for these verbs from PB, we can obtain useful context information that will allow us to better predict suitable frames for them.
 
 \paragraph{Corpus support for lexical types.} 984 of 4,894 verb senses (frame-disambiguated lexical units) in the FN lexicon 
 never occur in the full-text annotations; many more occur only a few times.\finalversion{\nss{how many verb *types* occur at least once in PB?}}
@@ -438,12 +436,14 @@ The first three of these have PB-WSJ annotations.
 %Ideally, a joint learning system should also be able to suggest new targets for a frame based on the lexical similarity with the frame's existing targets.
 
 \subsection{SemLink}\label{sec:semlink}
-
 The SemLink database \citep{semlink} specifies mappings between PropBank, FrameNet, and VerbNet. 
-It contains \emph{sense-level mappings} between VerbNet and each of the other resources; 
-because the senses in these resources may represent different interpretations and granularities of concepts, 
-the sense-level mappings may be one-to-one, one-to-many, or many-to-many.
-These mappings link PropBank and FrameNet indirectly via VerbNet. %, introducing additional coverage gaps and ambiguities.
+We analyzed the mappings between PropBank and FrameNet in order to determine their reliability in building a joint model.
+
+SemLink contains two types of mappings. The \emph{sense-level mappings} give correspondences between the concepts
+from each resource -- i.e between `frames' from FN, `rolesets' from PB and `roles' from VN. 
+Since they map different interpretations and granularities 
+of concepts, the sense-level mappings may be one-to-one, one-to-many, or many-to-many.
+PropBank and FrameNet are mapped indirectly via VerbNet. %, introducing additional coverage gaps and ambiguities.
 Second, SemLink provides some \emph{token-level parallel annotations} 
 for the 3~representations in a subset of the PB-WSJ text: hereafter SL-WSJ.
 
@@ -457,7 +457,8 @@ About 20\% of the instances are labeled \texttt{NF} (``no frame''), indicating a
 21\% of verbs have frame labels but no frame element annotations. 
 Most of these are predicates with modifier arguments. 
 Other arguments pointed to null anaphora that could not be resolved to overt arguments.
-This leaves 15,323 mappable instances with at least one overt argument, or 20\% of SL-WSJ verbs.
+This leaves 15,323 mappable instances with at least one overt argument, or 20\% of SL-WSJ verbs. This is a very small
+subset of the entire PB annotated data.
 
 The second table compares the extracted SL-WSJ annotations with the full-text FN annotations used to train SEMAFOR. 
 %The number of annotations at the sentence-level and frame-level are shown. 
@@ -499,8 +500,6 @@ Verb annotation density & 1.2 \\
 \caption{Comparison of annotation density\finalversion{\nss{consider showing: predicates/sentence, predicates/word, predicates/verb, args/predicate}}}
 \label{tab:annoUnit}
 \end{table}
-
-
 
 The mappings we obtained increase the number of annotations for around 170 frames. 
 Figure \ref{fig:framesBarchart} shows a stacked bar chart plotting the annotations for every frame, 
